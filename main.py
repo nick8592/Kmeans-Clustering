@@ -153,7 +153,8 @@ train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=10, shuffle
 val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=10, shuffle=True)
 
 # Set the device to use
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = 'cpu'
 
 # Get train images feature
 train_features = []
@@ -189,7 +190,7 @@ scaled_val_features = scaler.fit_transform(val_features)
 assert scaled_train_features.shape[1] == scaled_val_features.shape[1]
 
 # Perform k-means clustering
-kmeans = KMeans(n_clusters=num_clusters, random_state=1, n_init='auto').fit(scaled_train_features)
+kmeans = KMeans(n_clusters=num_clusters, random_state=0, n_init='auto').fit(scaled_train_features)
 
 # Predict the clusters for the test images
 predicted_labels = kmeans.predict(scaled_val_features)
