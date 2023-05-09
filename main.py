@@ -1,7 +1,7 @@
-import torch
-from torchvision import datasets, transforms
-import numpy as np
 import cv2
+import torch
+import numpy as np
+from torchvision import datasets, transforms
 from tensor_type import Tensor
 from tqdm.auto import tqdm
 from sklearn.cluster import KMeans
@@ -32,6 +32,9 @@ def extract_features(images: Tensor):
         # Convert grayscale image to array
         gray_arr = np.array(gray)
 
+        # Apply Gaussian blur to reduce noise
+        gray_blur = cv2.GaussianBlur(gray_arr, (5, 5), 0)
+
         # Compute the brightness of the image
         brightness = [calculate_brightness(gray)]
 
@@ -48,11 +51,14 @@ def extract_features(images: Tensor):
         h_hist = calculate_h_histogram(img)
 
         # Compute Number of lines using Hough Transform
-        lines = [calculate_lines(gray_arr)]
+        lines = [calculate_lines(gray_blur)]
+
+        # Compute Number of circles using Hough Transform
+        circles = [calculate_lines(gray_blur)]
 
         # Concatenate the features into a single array
         feature = np.concatenate([brightness, contours, euler_number, irregularity_ratio,
-                                  h_hist, lines])
+                                  h_hist, lines, circles])
         
         features.append(feature)
     features = np.array(features)
@@ -116,21 +122,27 @@ def calculate_h_histogram(img_rgb):
     hist, bins = np.histogram(h_channel, bins=180, range=[0, 180])
     return hist
 
-def calculate_lines(img):
-    # Apply Gaussian blur with a kernel size of 5x5
-    blurred = cv2.GaussianBlur(img, (5, 5), 0)
+def calculate_lines(gray_blur):
     # Apply edge detection (can be skipped if the input image is already an edge map)
-    edges = cv2.Canny(cv2.convertScaleAbs(blurred), 50, 150, apertureSize=3)
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_blur), 50, 150, apertureSize=3)
 
     # Apply Hough transform to detect lines
     lines = cv2.HoughLines(edges, 1, np.pi/180, 100)
 
-    # Check if any lines were detected
-    if lines is None:
-        return 0
-    else:
-        # Output the number of detected lines
+    # Output the number of detected lines
+    if lines is not None:
         return len(lines)
+    else:
+        return 0
+
+def calculate_circles(gray_blur):
+    # Detect circles using HoughCircles function
+    circles = cv2.HoughCircles(gray_blur, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=60, minRadius=0, maxRadius=150)
+
+    if circles is not None:
+        return len(circles)
+    else:
+        return 0
 
 def get_precision(cm_arr):
     '''
@@ -213,7 +225,7 @@ scaled_val_features = scaler.fit_transform(val_features)
 assert scaled_train_features.shape[1] == scaled_val_features.shape[1]
 
 # Perform k-means clustering
-kmeans = KMeans(n_clusters=num_clusters, random_state=0, n_init='auto').fit(scaled_train_features)
+kmeans = KMeans(n_clusters=num_clusters, random_state=2, n_init='auto').fit(scaled_train_features)
 
 # Predict the clusters for the test images
 predicted_labels = kmeans.predict(scaled_val_features)

@@ -1,19 +1,18 @@
 import cv2
 import numpy as np
 
-# Load image in grayscale
-# Load the image as a PIL image
-# image = Image.open("dataset/train/1_horse/horse_003.jpg")
-# image = Image.open("dataset/train/2_plane/plane_002.jpg")
-# image = Image.open("dataset/train/3_rooster/rooster_001.jpg")
-# image = Image.open("dataset/train/4_tree/tree_001.jpg")
-# image = Image.open("dataset/train/5_sailboat/sailboat_001.jpg")
-# image = Image.open("dataset/train/6_motorcycle/motorcycle_001.jpg")
-# image = Image.open("dataset/train/7_car/car_001.jpg")
-# image = Image.open("dataset/train/8_butterfly/butterfly_001.jpg")
-# image = Image.open("dataset/train/9_dragonfly/dragonfly_001.jpg")
-# image = Image.open("dataset/train/10_flower/flower_001.jpg")
-img_path = "dataset/train/10_flower/flower_001.jpg"
+path_1 = "dataset/train/1_horse/horse_003.jpg"
+path_2 = "dataset/train/2_plane/plane_002.jpg"
+path_3 = "dataset/train/3_rooster/rooster_001.jpg"
+path_4 = "dataset/train/4_tree/tree_001.jpg"
+path_5 = "dataset/train/5_sailboat/sailboat_001.jpg"
+path_6 = "dataset/train/6_motorcycle/motorcycle_001.jpg"
+path_7 = "dataset/train/7_car/car_001.jpg"
+path_8 = "dataset/train/8_butterfly/butterfly_001.jpg"
+path_9 = "dataset/train/9_dragonfly/dragonfly_001.jpg"
+path_0 = "dataset/train/10_flower/flower_001.jpg"
+
+img_path = path_0
 img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
 
 # Apply Gaussian blur with a kernel size of 5x5
