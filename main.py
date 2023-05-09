@@ -63,9 +63,12 @@ def extract_features(images: Tensor):
         # Compute Standard Deviation
         std_dev = [calculate_standard_deviation(gray_arr)]
 
+        # Compute Edgewise RGB histogram
+        rgb_hist = calculate_edge_histogram(img, gray_arr)
+
         # Concatenate the features into a single array
         feature = np.concatenate([brightness, contours, euler_number, irregularity_ratio,
-                                  h_hist, lines, circles, hog_features, std_dev])
+                                  h_hist, lines, circles, hog_features, std_dev, rgb_hist])
         
         features.append(feature)
     features = np.array(features)
@@ -161,8 +164,52 @@ def calculate_standard_deviation(gray_arr):
     std_dev = np.std(gray_arr)
     return std_dev
 
-def liou_edge():
-    pass
+def calculate_edge_histogram(img_rgb, gray_arr):
+    # Apply Canny edge detection
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
+
+    # Dilate the edges to connect nearby edges
+    kernel = np.ones((5,5), np.uint8)
+    dilated_edges = cv2.dilate(edges, kernel, iterations=1)
+
+    # Find contours in the dilated edges
+    contours, hierarchy = cv2.findContours(dilated_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Check that contours is not empty
+    if len(contours) > 0:
+        # Find the index of the largest contour
+        largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
+
+        # Find the index of the largest contour
+        largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
+
+        # Create a mask for the largest contour and fill it with 
+        mask = np.zeros_like(gray_arr)
+        cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
+
+        # Calculate the area of the mask
+        mask_area = cv2.countNonZero(mask)
+
+        # Calculate the RGB histogram of the masked image
+        masked_img = cv2.bitwise_and(img_rgb, img_rgb, mask=mask)
+        color = ('b','g','r')
+        histograms = []
+        for i, col in enumerate(color):
+            hist = cv2.calcHist([masked_img], [i], mask, [256], [0, 256])
+            histograms.append(hist)
+    else:
+        # Handle the case where no contours were found
+        largest_contour_index = None
+        color = ('b','g','r')
+        histograms = []
+        for i, col in enumerate(color):
+            hist = cv2.calcHist([img_rgb], [i], None, [256], [0, 256])
+            histograms.append(hist)
+    r_hist = np.asarray(histograms[0]).reshape((256,))
+    g_hist = np.asarray(histograms[1]).reshape((256,))
+    b_hist = np.asarray(histograms[2]).reshape((256,))
+    rgb_hist_array = np.concatenate([r_hist, g_hist, b_hist])
+    return rgb_hist_array
 
 def get_precision(cm_arr):
     '''
