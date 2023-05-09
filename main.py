@@ -47,10 +47,12 @@ def extract_features(images: Tensor):
         # Compute Hue histogram
         h_hist = calculate_h_histogram(img)
 
+        # Compute Number of lines using Hough Transform
+        lines = [calculate_lines(gray_arr)]
+
         # Concatenate the features into a single array
         feature = np.concatenate([brightness, contours, euler_number, irregularity_ratio,
-                                  h_hist])
-        # feature = h_hist
+                                  h_hist, lines])
         
         features.append(feature)
     features = np.array(features)
@@ -74,10 +76,13 @@ def calculate_brightness(grayscale_image):
 def calculate_contours(grayscale_image, threshold:int = 128):
     # Create a binary image by thresholding the grayscale image
     binary = cv2.threshold(grayscale_image, threshold, 255, cv2.THRESH_BINARY)[1]
+
     # Convert the grayscale image to a numpy array
     img_arr = np.array(binary)
+
     # Find contours in the image
     contours = measure.find_contours(img_arr, 0.5)
+
     # Calculate the number of contours
     num_contours = len(contours)
     return num_contours
@@ -103,11 +108,29 @@ def calculate_irregularity_ratio(gray_arr):
 def calculate_h_histogram(img_rgb):
     # Convert RGB image to HSV color space
     img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
+
     # Extract the H channel from HSV image
     h_channel = img_hsv[:, :, 0]
+    
     # Calculate the histogram
     hist, bins = np.histogram(h_channel, bins=180, range=[0, 180])
     return hist
+
+def calculate_lines(img):
+    # Apply Gaussian blur with a kernel size of 5x5
+    blurred = cv2.GaussianBlur(img, (5, 5), 0)
+    # Apply edge detection (can be skipped if the input image is already an edge map)
+    edges = cv2.Canny(cv2.convertScaleAbs(blurred), 50, 150, apertureSize=3)
+
+    # Apply Hough transform to detect lines
+    lines = cv2.HoughLines(edges, 1, np.pi/180, 100)
+
+    # Check if any lines were detected
+    if lines is None:
+        return 0
+    else:
+        # Output the number of detected lines
+        return len(lines)
 
 def get_precision(cm_arr):
     '''
