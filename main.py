@@ -247,6 +247,8 @@ transform = transforms.Compose([
 # Load the dataset
 train_dataset = datasets.ImageFolder('dataset/train', transform=transform)
 val_dataset = datasets.ImageFolder('dataset/test', transform=transform)
+assert train_dataset.class_to_idx == val_dataset.class_to_idx
+classes = train_dataset.class_to_idx
 
 # Create a data loader for the training set
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=10, shuffle=True)
@@ -284,12 +286,10 @@ val_features = np.reshape(val_features, (val_image_num, val_feature_num))
 val_labels = np.array(val_labels)
 val_labels = np.reshape(val_labels, (val_image_num, ))
 
-
 # Pre-Processing
 scaler = StandardScaler()
 scaled_train_features = scaler.fit_transform(train_features)
 scaled_val_features = scaler.fit_transform(val_features)
-assert scaled_train_features.shape[1] == scaled_val_features.shape[1]
 
 # Find best random_state
 best_random_state = None
