@@ -9,6 +9,7 @@ from sklearn.metrics import confusion_matrix, \
     multilabel_confusion_matrix, precision_score, recall_score
 from sklearn.preprocessing import StandardScaler
 from skimage import measure
+from skimage.feature import hog
 
 def show_img(images: Tensor):
     for i in range(images.shape[0]):
@@ -56,9 +57,12 @@ def extract_features(images: Tensor):
         # Compute Number of circles using Hough Transform
         circles = [calculate_lines(gray_blur)]
 
+        # Compute HOG
+        hog_features = calculate_hog(gray_arr)
+
         # Concatenate the features into a single array
         feature = np.concatenate([brightness, contours, euler_number, irregularity_ratio,
-                                  h_hist, lines, circles])
+                                  h_hist, lines, circles, hog_features])
         
         features.append(feature)
     features = np.array(features)
@@ -143,6 +147,11 @@ def calculate_circles(gray_blur):
         return len(circles)
     else:
         return 0
+
+def calculate_hog(gray_arr):
+    # Perform HOG feature extraction
+    hog_features = hog(gray_arr, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(2, 2))
+    return hog_features
 
 def get_precision(cm_arr):
     '''
