@@ -1,19 +1,18 @@
 import torch
 from torchvision import datasets, transforms
-from torchvision import transforms
 import numpy as np
-from PIL import Image, ImageFilter
+import cv2
 from tensor_type import Tensor
 from tqdm.auto import tqdm
 from sklearn.cluster import KMeans
 from sklearn.metrics import confusion_matrix, \
     multilabel_confusion_matrix, precision_score, recall_score
 from sklearn.preprocessing import StandardScaler
+from skimage import measure
 
-def show_img(images: Tensor, labels: Tensor):
+def show_img(images: Tensor):
     for i in range(images.shape[0]):
         img = transforms.ToPILImage()(images[i])
-        print(labels[i].item())
         img.show()
         input()
 
@@ -21,26 +20,94 @@ def show_img(images: Tensor, labels: Tensor):
 def extract_features(images: Tensor):
     features = []
     for i in range(images.shape[0]):
-        img = transforms.ToPILImage()(images[i])
-        # Convert the image to grayscale
-        gray = img.convert('L')
+        # Convert the tensor to a numpy array
+        array = images[i].numpy()
 
-        # Compute the edges
-        edges = gray.filter(ImageFilter.FIND_EDGES)
-        edges = transforms.ToTensor()(edges)
+        # Transpose the numpy array to match the format expected by OpenCV (H, W, C)
+        img = np.transpose(array, (1, 2, 0))
 
-        # Compute the RGB color histogram
-        r, g, b = img.split()
-        r_hist = r.histogram()
-        g_hist = g.histogram()
-        b_hist = b.histogram()
+        # Convert the numpy array to an OpenCV image in grayscale format
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+
+        # Convert grayscale image to array
+        gray_arr = np.array(gray)
+
+        # Compute the brightness of the image
+        brightness = [calculate_brightness(gray)]
+
+        # Compute the contours
+        contours = [calculate_contours(gray)]
+
+        # Compute the Euler number
+        euler_number = [calculate_euler_number(gray_arr)]
+
+        # Compute the irregularity ratio
+        irregularity_ratio = [calculate_irregularity_ratio(gray_arr)]
+
+        # Compute Hue histogram
+        h_hist = calculate_h_histogram(img)
 
         # Concatenate the features into a single array
-        feature = np.concatenate([edges.flatten(),
-                                  r_hist, g_hist, b_hist])
+        feature = np.concatenate([brightness, contours, euler_number, irregularity_ratio,
+                                  h_hist])
+        # feature = h_hist
+        
         features.append(feature)
     features = np.array(features)
     return features
+
+def calculate_brightness(grayscale_image):
+    # Calculate histogram
+    hist, bins = np.histogram(grayscale_image.ravel(), 256, [0, 256])
+
+    pixels = sum(hist)
+    brightness = scale = len(hist)
+
+    for index in range(0, scale):
+        ratio = hist[index] / pixels
+        brightness += ratio * (-scale + index)
+
+    value = 1 if brightness == 255 else brightness / scale
+    value = round(value, 4)
+    return value
+
+def calculate_contours(grayscale_image, threshold:int = 128):
+    # Create a binary image by thresholding the grayscale image
+    binary = cv2.threshold(grayscale_image, threshold, 255, cv2.THRESH_BINARY)[1]
+    # Convert the grayscale image to a numpy array
+    img_arr = np.array(binary)
+    # Find contours in the image
+    contours = measure.find_contours(img_arr, 0.5)
+    # Calculate the number of contours
+    num_contours = len(contours)
+    return num_contours
+
+def calculate_euler_number(gray_arr):
+    euler_number = 0
+    for i in range(gray_arr.shape[0]-1):
+        for j in range(gray_arr.shape[1]-1):
+            a = gray_arr[i][j]
+            b = gray_arr[i][j+1]
+            c = gray_arr[i+1][j]
+            d = gray_arr[i+1][j+1]
+            if (a != b) or (a != c) or (a != d):
+                euler_number += 1
+    return euler_number
+
+def calculate_irregularity_ratio(gray_arr):
+    std_dev = np.std(gray_arr)
+    mean = np.mean(gray_arr)
+    irregularity_ratio = std_dev/mean
+    return irregularity_ratio
+
+def calculate_h_histogram(img_rgb):
+    # Convert RGB image to HSV color space
+    img_hsv = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2HSV)
+    # Extract the H channel from HSV image
+    h_channel = img_hsv[:, :, 0]
+    # Calculate the histogram
+    hist, bins = np.histogram(h_channel, bins=180, range=[0, 180])
+    return hist
 
 def get_precision(cm_arr):
     '''
@@ -119,51 +186,32 @@ print(f"Val Labels: \n{val_labels}")
 scaler = StandardScaler()
 scaled_train_features = scaler.fit_transform(train_features)
 scaled_val_features = scaler.fit_transform(val_features)
+assert scaled_train_features.shape[1] == scaled_val_features.shape[1]
 
 # Perform k-means clustering
-centroids = scaled_train_features[np.random.choice(scaled_train_features.shape[0], num_clusters, replace=False)]
-for i in tqdm(range(100), desc='K-means'):
-    distances = np.sqrt(((scaled_train_features - centroids[:, np.newaxis])**2).sum(axis=2))
-    labels = np.argmin(distances, axis=0)
-    for j in range(num_clusters):
-        centroids[j] = scaled_train_features[labels == j].mean(axis=0)
+kmeans = KMeans(n_clusters=num_clusters, random_state=1, n_init='auto').fit(scaled_train_features)
 
 # Predict the clusters for the test images
-distances = np.sqrt(((scaled_val_features - centroids[:, np.newaxis])**2).sum(axis=2))
-predicted_labels = np.argmin(distances, axis=0)
+predicted_labels = kmeans.predict(scaled_val_features)
 print(f"Predicted Labels: \n{predicted_labels}")
-
-
-# # sklearn k-meanse
-# kmeans = KMeans(init="random",n_clusters=num_clusters,n_init=10,max_iter=300,random_state=42)
-# fit = kmeans.fit(scaled_train_features)
-# inertia = kmeans.inertia_
-# center = kmeans.cluster_centers_
-# itr = kmeans.n_iter_
-# print(fit)
-# print(inertia)
-# print(center.shape)
-# print(itr)
-# input()
-
 
 # Confusion matrix
 cm = confusion_matrix(val_labels, predicted_labels)
-print(f"Confusion Matrix: \n{cm}")
+# print(f"Confusion Matrix: \n{cm}")
 
 mcm = multilabel_confusion_matrix(val_labels, predicted_labels)
-print(f"Multi Confusion Matrix: \n{mcm}")
+# print(f"Multi Confusion Matrix: \n{mcm}")
+
+print(f"Features Num: {scaled_train_features.shape[1]}")
 
 # Calculate Precision, Recall
 pre = precision_score(val_labels, predicted_labels, average='micro')
 rec = recall_score(val_labels, predicted_labels, average='micro')
-print(f"Total Precision: {pre}")
-print(f"Total Recall:    {rec}")
+print(f"Total Precision: {pre:.4f}, Total Recall: {rec:.4f}")
 
 for i in range(mcm.shape[0]):
     precision = get_precision(mcm[i])
     recall = get_recall(mcm[i])
-    print(f"{i}. Precision: {precision}")
-    print(f"{i}. Recall:    {recall}")
+    print(f"Label {i}: Precision={precision:.4f}, Recall={recall:.4f}")
 
 
