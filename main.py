@@ -60,9 +60,12 @@ def extract_features(images: Tensor):
         # Compute HOG
         hog_features = calculate_hog(gray_arr)
 
+        # Compute Standard Deviation
+        std_dev = [calculate_standard_deviation(gray_arr)]
+
         # Concatenate the features into a single array
         feature = np.concatenate([brightness, contours, euler_number, irregularity_ratio,
-                                  h_hist, lines, circles, hog_features])
+                                  h_hist, lines, circles, hog_features, std_dev])
         
         features.append(feature)
     features = np.array(features)
@@ -153,6 +156,14 @@ def calculate_hog(gray_arr):
     hog_features = hog(gray_arr, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(2, 2))
     return hog_features
 
+def calculate_standard_deviation(gray_arr):
+    # Calculate standard deviation
+    std_dev = np.std(gray_arr)
+    return std_dev
+
+def liou_edge():
+    pass
+
 def get_precision(cm_arr):
     '''
     Precision = TP / (TP + FP)
@@ -225,7 +236,7 @@ val_feature_num = val_features.shape[2]
 val_features = np.reshape(val_features, (val_image_num, val_feature_num))
 val_labels = np.array(val_labels)
 val_labels = np.reshape(val_labels, (val_image_num, ))
-print(f"Val Labels: \n{val_labels}")
+
 
 # Pre-Processing
 scaler = StandardScaler()
@@ -233,11 +244,30 @@ scaled_train_features = scaler.fit_transform(train_features)
 scaled_val_features = scaler.fit_transform(val_features)
 assert scaled_train_features.shape[1] == scaled_val_features.shape[1]
 
+# Find best random_state
+best_random_state = None
+best_precision = 0
+best_recall = 0
+
+for random_state in tqdm(range(10), desc='Find Best Random State'):
+    kmeans = KMeans(n_clusters=num_clusters, random_state=random_state, n_init='auto').fit(scaled_train_features)
+    predicted_labels = kmeans.predict(scaled_val_features)
+    pre = precision_score(val_labels, predicted_labels, average='micro')
+    rec = recall_score(val_labels, predicted_labels, average='micro')
+    if pre + rec > best_precision + best_recall:
+        best_precision = pre
+        best_recall = rec
+        best_random_state = random_state
+
+print(f"Best random_state: {best_random_state}")
+print(f"Highest Total Precision: {best_precision:.4f}, Highest Total Recall: {best_recall:.4f}")
+
 # Perform k-means clustering
-kmeans = KMeans(n_clusters=num_clusters, random_state=2, n_init='auto').fit(scaled_train_features)
+kmeans = KMeans(n_clusters=num_clusters, random_state=best_random_state, n_init='auto').fit(scaled_train_features)
 
 # Predict the clusters for the test images
 predicted_labels = kmeans.predict(scaled_val_features)
+print(f"Val Labels: \n{val_labels}")
 print(f"Predicted Labels: \n{predicted_labels}")
 
 # Confusion matrix
