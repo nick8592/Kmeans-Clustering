@@ -3,6 +3,6 @@ numpy
 torch==2.0.0
 torchvision==0.15.1
 scikit-learn==1.2.2
-scikit-image==2.20.0
+scikit-image==0.20.0
 tqdm==4.65.0
 opencv-python-headless
