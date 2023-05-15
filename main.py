@@ -10,6 +10,7 @@ from sklearn.metrics import confusion_matrix, \
 from sklearn.preprocessing import StandardScaler
 from skimage import measure
 from skimage.feature import hog
+from imagedominantcolor import DominantColor
 
 def show_img(images: Tensor):
     for i in range(images.shape[0]):
@@ -43,7 +44,7 @@ def extract_features(images: Tensor):
         contours = [calculate_contours(gray)]
 
         # Compute the Euler number
-        euler_number = [calculate_euler_number(gray_arr)]
+        # euler_number = [calculate_euler_number(gray_arr)]
 
         # Compute the irregularity ratio
         irregularity_ratio = [calculate_irregularity_ratio(gray_arr)]
@@ -66,9 +67,13 @@ def extract_features(images: Tensor):
         # Compute Edgewise RGB histogram
         rgb_hist = calculate_edge_histogram(img, gray_arr)
 
+        # Compute Dominate Color
+        center1, center2, center3 = calculate_dominate_color(img)
+
         # Concatenate the features into a single array
-        feature = np.concatenate([brightness, contours, euler_number, irregularity_ratio,
-                                  h_hist, lines, circles, hog_features, std_dev, rgb_hist])
+        feature = np.concatenate([brightness, contours,
+                                  h_hist, lines, circles, hog_features,
+                                  center1, center2, center3])
         
         features.append(feature)
     features = np.array(features)
@@ -210,6 +215,14 @@ def calculate_edge_histogram(img_rgb, gray_arr):
     b_hist = np.asarray(histograms[2]).reshape((256,))
     rgb_hist_array = np.concatenate([r_hist, g_hist, b_hist])
     return rgb_hist_array
+
+def calculate_dominate_color(img_rgb):
+    clt = KMeans(n_clusters=3, n_init='auto')
+    centers = clt.fit(img_rgb.reshape(-1, 3))
+    center1 = (centers.cluster_centers_[0]*255).astype(int)
+    center2 = (centers.cluster_centers_[1]*255).astype(int)
+    center3 = (centers.cluster_centers_[2]*255).astype(int)
+    return center1, center2, center3
 
 def get_precision(cm_arr):
     '''
