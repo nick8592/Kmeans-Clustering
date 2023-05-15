@@ -1,36 +1,51 @@
-# Import library
-from clustimage import Clustimage
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+import skimage
+import numpy as np
 
-# init
-cl = Clustimage(method='pca')
+path = '../dataset/train/2_plane/plane_007.jpg'
 
-# Note that you manually need to download the data from the caltech website and simply provide the directory where the images are stored.
-# Download dataset
+image_orig = skimage.io.imread(path) # Load image
 
-# Cluster  images in path location.
-results = cl.fit_transform('.//101_ObjectCategories//', min_clust=60, max_clust=110)
+width = image_orig.shape[0]
+height = image_orig.shape[1]
+channels = image_orig.shape[2]
 
-# If you want to experiment with a different clustering and/or evaluation approach, use the cluster functionality.
-# This will avoid pre-processing, and performing the feature extraction of all images again.
-# You can also cluster on the 2-D embedded space by setting the cluster_space parameter 'low'
-#
-# cluster(cluster='agglomerative', evaluate='dbindex', metric='euclidean', linkage='ward', min_clust=15, max_clust=200, cluster_space='high')
+image = np.reshape(image_orig, (width, height*channels))
 
-# Cluster evaluation plots such as the Silhouette plot
-cl.clusteval.plot()
-cl.clusteval.scatter(cl.results['xycoord'])
+# Utility function that compresses image with given number
+# of principal components
+def compress_image(n_components, image, size):
+    pca = PCA(n_components=n_components)
+    image_compressed = pca.fit_transform(image)
+    print(pca.components_.shape)
+    return pca.inverse_transform(image_compressed).reshape(size).astype('uint8')
 
-# PCA explained variance plot
-cl.pca.plot()
+# Compress images with different numbers of principal components
+image_6 = compress_image(6, image, image_orig.shape)
+image_36 = compress_image(36, image, image_orig.shape)
+image_95 = compress_image(95, image, image_orig.shape)
+image_283 = compress_image(283, image, image_orig.shape)
+# image_583 = compress_image(583, image, image_orig.shape)
 
-# Dendrogram
-cl.dendrogram()
+fig, axes = plt.subplots(2,3, figsize=(10,5), constrained_layout=True)
 
-# Plot unique image per cluster
-cl.plot_unique(img_mean=False)
+axes[0][0].imshow(image_6)
+axes[0][0].set_title("Compressed image (PCA: 6)")
 
-# Scatterplot
-cl.scatter(dotsize=8, zoom=0.2, img_mean=False)
+axes[0][1].imshow(image_36)
+axes[0][1].set_title("Compressed image (PCA: 36)")
 
-# Plot images per cluster or all clusters
-cl.plot(labels=8)
+axes[0][2].imshow(image_95)
+axes[0][2].set_title("Compressed image (PCA: 95)")
+
+axes[1][0].imshow(image_283)
+axes[1][0].set_title("Compressed image (PCA: 283)")
+
+# axes[1][1].imshow(image_583)
+# axes[1][1].set_title("Compressed image (PCA: 583)")
+
+axes[1][2].imshow(image_orig)
+axes[1][2].set_title("Original image")
+plt.show()
+
