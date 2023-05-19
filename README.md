@@ -25,6 +25,12 @@ pip install -r requirements.txt
 ```
 
 ## Example
+Add features in your `feature_list` at [line 75](https://github.com/nick8592/Kmeans-Clustering/blob/b89ec7397fdb9654cd41f3f98c44e4baa10a77c2/main.py#L75) in `main.py`.   
+You can place in any kinds of feature in `feature_list`
+For example
+```
+feature_list = [brightness, euler_number, irregularity_ratio, lines, circles]
+```
 Run K-means Clustering
 ```
 python main.py
