@@ -33,4 +33,5 @@ Run Feature seperately
 ```
 cd features
 python <feature>.py <---- replace <feature> with the filename you want to execute
+(e.g.) python circle.py
 ```
