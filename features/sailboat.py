@@ -9,7 +9,7 @@ def detect_sailboat(image_path):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     
     # Define the lower and upper bounds for the sailboat color in HSV
-    lower_color = np.array([100, 80, 100])
+    lower_color = np.array([100, 100, 100])
     upper_color = np.array([130, 255, 255])
     
     # Threshold the image to extract the sailboat color region
@@ -45,7 +45,7 @@ def detect_sailboat(image_path):
     return sailboat_detected
 
 # Specify the path to your image
-image_path = '../dataset/test/7_car/car_03.jpg'
+image_path = '../dataset/test/5_sailboat/sailboat_09.jpg'
 
 # Detect sailboat in the image
 sailboat_detected = detect_sailboat(image_path)
@@ -54,3 +54,5 @@ if sailboat_detected:
     print("Sailboat detected!")
 else:
     print("No sailboat detected.")
+
+
