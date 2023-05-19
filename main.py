@@ -71,10 +71,9 @@ def extract_features(images: Tensor):
         row_non_zeros, column_non_zeros = calculate_projection(gray_arr)
 
         # Concatenate the features into a single array
-        feature = np.concatenate([brightness, contours,
-                                  h_hist, lines, circles, hog_features,
-                                  center1, center2, center3,
-                                  row_non_zeros, column_non_zeros])
+        # Place features that you want to use in the list
+        feature_list = []
+        feature = np.concatenate(feature_list)
         
         features.append(feature)
     features = np.array(features)
