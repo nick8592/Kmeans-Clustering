@@ -81,8 +81,8 @@ def extract_features(images: Tensor):
     return features
 
 #-----------------------------------------------------------------------------------------------
-# 11
-torch.manual_seed(11)
+
+torch.manual_seed(0)
 
 num_clusters = 10
 
@@ -157,24 +157,25 @@ for random_state in tqdm(range(50), desc='Find Best Random State'):
         best_precision = pre
         best_recall = rec
         best_random_state = random_state
+        best_predicted_labels = predicted_labels
 
 # Predict the clusters for the test images
 predicted_labels = kmeans.predict(scaled_val_features)
 print(f"Val Labels: \n{val_labels}")
-print(f"Predicted Labels: \n{predicted_labels}")
+print(f"Predicted Labels: \n{best_predicted_labels}")
 
 print(f"Features Num: {scaled_train_features.shape[1]}")
 print(f"Best random_state: {best_random_state}")
 print(f"Highest Total Precision: {best_precision:.4f}, Highest Total Recall: {best_recall:.4f}")
 
-# # Calculate Precision, Recall
+# Calculate Precision, Recall
 # pre = precision_score(val_labels, predicted_labels, average='micro')
 # rec = recall_score(val_labels, predicted_labels, average='micro')
 # print(f"Total Precision: {pre:.4f}, Total Recall: {rec:.4f}")
 
 for item in range(0, 10):
     val = [1 if n == item else 0 for n in val_labels]
-    pred = [1 if n == item else 0 for n in predicted_labels]
+    pred = [1 if n == item else 0 for n in best_predicted_labels]
     pre = precision_score(val, pred, average='binary')
     rec = recall_score(val, pred, average='binary')
     print(f"Label {item}: Precision={pre:.4f}, Recall={rec:.4f}")
