@@ -14,3 +14,24 @@
 
 Precision can be seen as a measure of quality, and recall as a measure of quantity. Higher precision means that an algorithm returns more relevant results than irrelevant ones, and high recall means that an algorithm returns most of the relevant results (whether or not irrelevant ones are also returned). [For more...](https://en.wikipedia.org/wiki/Precision_and_recall)   
 
+## Installation
+Download from github
+```
+git clone https://github.com/nick8592/Kmeans-Clustering.git
+```
+Install reqired dependencies
+```
+pip install -r requirements.txt
+```
+
+## Example
+Run K-means Clustering
+```
+python main.py
+```
+Run Feature seperately
+```
+cd features
+python <feature>.py <---- replace <feature> with the filename you want to execute
+(e.g.) python circle.py
+```
