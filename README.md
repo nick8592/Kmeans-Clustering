@@ -59,4 +59,4 @@ Label 7: Precision=0.3600, Recall=0.9000
 Label 8: Precision=0.0000, Recall=0.0000
 Label 9: Precision=0.6364, Recall=0.7000
 ```
-> Note: The `1.000` in Precision is incorrect, it may be because of dividing by 0 when calculate the precision, resulting in an output of 1
+> Note: The `1.000` in Precision is incorrect, it may be because of dividing by 0 when calculate the precision, resulting in an output of 1.   
