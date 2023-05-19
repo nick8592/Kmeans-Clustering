@@ -82,7 +82,7 @@ def extract_features(images: Tensor):
 
 #-----------------------------------------------------------------------------------------------
 
-torch.manual_seed(0)
+torch.manual_seed(1)
 
 num_clusters = 10
 
