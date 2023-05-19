@@ -41,7 +41,7 @@ def extract_features(images: Tensor):
         contours = [calculate_contours(gray)]
 
         # Compute the Euler number
-        # euler_number = [calculate_euler_number(gray_arr)]
+        euler_number = [calculate_euler_number(gray_arr)]
 
         # Compute the irregularity ratio
         irregularity_ratio = [calculate_irregularity_ratio(gray_arr)]
@@ -151,8 +151,8 @@ for random_state in tqdm(range(50), desc='Find Best Random State'):
     # Perform k-means clustering
     kmeans = KMeans(n_clusters=num_clusters, random_state=random_state, n_init='auto').fit(scaled_train_features)
     predicted_labels = kmeans.predict(scaled_val_features)
-    pre = precision_score(val_labels, predicted_labels, average='micro')
-    rec = recall_score(val_labels, predicted_labels, average='micro')
+    pre = precision_score(val_labels, predicted_labels, average='micro', zero_division=1)
+    rec = recall_score(val_labels, predicted_labels, average='micro', zero_division=1)
     if pre + rec > best_precision + best_recall:
         best_precision = pre
         best_recall = rec
@@ -176,8 +176,8 @@ print(f"Highest Total Precision: {best_precision:.4f}, Highest Total Recall: {be
 for item in range(0, 10):
     val = [1 if n == item else 0 for n in val_labels]
     pred = [1 if n == item else 0 for n in best_predicted_labels]
-    pre = precision_score(val, pred, average='binary')
-    rec = recall_score(val, pred, average='binary')
+    pre = precision_score(val, pred, average='binary', zero_division=1)
+    rec = recall_score(val, pred, average='binary', zero_division=1)
     print(f"Label {item}: Precision={pre:.4f}, Recall={rec:.4f}")
 
 
