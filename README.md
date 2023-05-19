@@ -34,12 +34,9 @@ Run K-means Clustering
 ```
 python main.py
 ```
-Real feature method used in `main.py` please check out `utils.py`
-You should see the results looks like below format
+Real feature method used in `main.py` please check out `utils.py`.   
+You should see the results looks like below format.   
 ```
-Extract Train Image Features: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████| 100/100 [02:01<00:00,  1.21s/it]
-Extract Val Image Features: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:12<00:00,  1.24s/it]
-Find Best Random State: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 50/50 [01:04<00:00,  1.28s/it]
 Val Labels: 
 [9 7 3 3 5 2 1 1 6 2 7 6 3 0 4 8 1 6 1 1 6 9 3 7 4 5 7 5 2 6 9 7 5 3 4 0 2
  5 4 8 8 5 0 9 9 4 2 3 5 6 6 1 3 0 2 8 8 0 2 9 3 6 9 4 8 9 8 4 1 7 0 5 5 4
