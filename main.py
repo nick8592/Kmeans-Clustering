@@ -224,6 +224,12 @@ def calculate_dominate_color(img_rgb):
     center3 = (centers.cluster_centers_[2]*255).astype(int)
     return center1, center2, center3
 
+def calculate_projection(gray_arr):
+    # Apply edge detection (can be skipped if the input image is already an edge map)
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 50, 150, apertureSize=3)
+    pass
+
+
 def get_precision(cm_arr):
     '''
     Precision = TP / (TP + FP)
