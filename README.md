@@ -34,7 +34,7 @@ Run K-means Clustering
 ```
 python main.py
 ```
-Real feature method used in `main.py` please check out `utils.py`.   
+> Real feature method used in `main.py` please check out `utils.py`.   
 You should see the results looks like below format.   
 ```
 Val Labels: 
