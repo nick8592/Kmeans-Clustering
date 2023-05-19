@@ -35,3 +35,4 @@ cd features
 python <feature>.py <---- replace <feature> with the filename you want to execute
 (e.g.) python circle.py
 ```
+Real feature method used in `main.py` please check out `utils.py`
