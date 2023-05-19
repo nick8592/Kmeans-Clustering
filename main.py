@@ -7,7 +7,6 @@ from tqdm.auto import tqdm
 from sklearn.cluster import KMeans
 from sklearn.metrics import precision_score, recall_score
 from sklearn.preprocessing import StandardScaler
-from imagedominantcolor import DominantColor
 from utils import *
 
 def show_img(images: Tensor):
