@@ -73,11 +73,15 @@ def extract_features(images: Tensor):
         # Compute Entropy
         entropy = [calculate_entropy(gray_arr)]
 
+        # Compute Edge image non-zero pixels
+        non_zero_pixels = [calculate_edge_non_zero_pixels(gray_arr)]
+
         # Concatenate the features into a single array
         feature = np.concatenate([brightness, contours,
-                                  h_hist, lines, circles, hog_features,
+                                  h_hist, lines, circles,
                                   center1, center2, center3,
-                                  row_non_zeros, column_non_zeros])
+                                  row_non_zeros, column_non_zeros,
+                                  non_zero_pixels])
         
         features.append(feature)
     features = np.array(features)

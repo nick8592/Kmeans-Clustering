@@ -152,7 +152,7 @@ def calculate_dominate_color(img_rgb):
 
 def calculate_projection(gray_arr):
     # Apply edge detection (can be skipped if the input image is already an edge map)
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 50, 150, apertureSize=3)
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 150)
     # Calculate the non-zero values for each row and column
     row_non_zeros = np.count_nonzero(edges, axis=1)
     column_non_zeros = np.count_nonzero(edges, axis=0)
@@ -165,3 +165,13 @@ def calculate_entropy(gray_arr):
     # Calculate the entropy using the histogram
     entropy_value = entropy(histogram, base=2)
     return entropy_value
+
+def calculate_edge_non_zero_pixels(gray_arr):
+    # Apply edge detection
+    threshold1 = 100
+    threshold2 = 150
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), threshold1, threshold2)
+
+    # Calculate the number of non-zero pixels
+    non_zero_pixels = np.count_nonzero(edges)
+    return non_zero_pixels

@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # Load and preprocess the image
-image_path = '../dataset/test/10_flower/flower_02.jpg'
+image_path = '../dataset/test/3_rooster/rooster_04.jpg'
 
 # Load the image
 image = cv2.imread(image_path, 0)
