@@ -86,13 +86,8 @@ def extract_features(images: Tensor):
         a_hist, b_hist = calculate_a_b_histogram(img)
 
         # Concatenate the features into a single array
-        feature_list = [brightness, contours,
-                        h_hist, lines, circles,
-                        entropy, rgb_hist, std_dev,
-                        row_non_zeros, column_non_zeros,
-                        non_zero_pixels, perimeter,
-                        cb_hist, cr_hist,
-                        a_hist, b_hist]
+        # You can add/remove features from the feature_list
+        feature_list = [brightness, euler_number, irregularity_ratio, lines, circles]
         feature = np.concatenate(feature_list)
         
         features.append(feature)
