@@ -79,12 +79,20 @@ def extract_features(images: Tensor):
         # Compute Perimeter
         perimeter = [calculate_perimeter(gray_arr)]
 
+        # Compute YCbCr color space Cb, Cr histogram
+        cb_hist, cr_hist = calculate_cb_cr_histogram(img)
+
+        # Compute Lab color space a, b histogram
+        a_hist, b_hist = calculate_a_b_histogram(img)
+
         # Concatenate the features into a single array
-        feature = np.concatenate([brightness, contours, hog_features,
+        feature = np.concatenate([brightness, contours,
                                   h_hist, lines, circles,
                                   entropy, rgb_hist, std_dev,
                                   row_non_zeros, column_non_zeros,
-                                  non_zero_pixels, perimeter])
+                                  non_zero_pixels, perimeter,
+                                  cb_hist, cr_hist,
+                                  a_hist, b_hist])
         
         features.append(feature)
     features = np.array(features)
@@ -92,7 +100,7 @@ def extract_features(images: Tensor):
 
 #-----------------------------------------------------------------------------------------------
 # 1, 22
-torch.manual_seed(1)
+torch.manual_seed(2)
 
 num_clusters = 10
 
