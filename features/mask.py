@@ -19,6 +19,9 @@ for path in img_path:
     # Load the image
     image = cv2.imread(path)
 
+    # Get image height, width, channel
+    h, w, c = image.shape
+
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -39,18 +42,16 @@ for path in img_path:
     mask = np.zeros_like(gray)
     cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
 
-    # Apply Canny edge detection
-    mask_edge = cv2.Canny(mask, 100, 200)
-
     # Calculate the number of non-zero pixels
-    non_zero_pixels = np.count_nonzero(mask_edge)
+    non_zero_pixels = np.count_nonzero(mask)
 
-    # Print the result
-    print("Number of non-zero pixels in the edge image:", non_zero_pixels)
+    mask_area = round((non_zero_pixels / (h * w)) * 100)
+
+    print(f"Mask Area: {mask_area}%")
 
     # Show the original image and the segmented image
+    cv2.imshow('original', image)
     cv2.imshow('mask', mask)
-    cv2.imshow('mask edge', mask_edge)
 
     # Wait for a key press and then close the windows
     cv2.waitKey(0)
