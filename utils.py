@@ -65,7 +65,7 @@ def calculate_h_histogram(img_rgb):
 
 def calculate_lines(gray_blur):
     # Apply edge detection (can be skipped if the input image is already an edge map)
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_blur), 50, 150, apertureSize=3)
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_blur), 100, 200)
 
     # Apply Hough transform to detect lines
     lines = cv2.HoughLines(edges, 1, np.pi/180, 100)
@@ -152,7 +152,7 @@ def calculate_dominate_color(img_rgb):
 
 def calculate_projection(gray_arr):
     # Apply edge detection (can be skipped if the input image is already an edge map)
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 150)
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
     # Calculate the non-zero values for each row and column
     row_non_zeros = np.count_nonzero(edges, axis=1)
     column_non_zeros = np.count_nonzero(edges, axis=0)
@@ -168,26 +168,39 @@ def calculate_entropy(gray_arr):
 
 def calculate_edge_non_zero_pixels(gray_arr):
     # Apply edge detection
-    threshold1 = 100
-    threshold2 = 150
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), threshold1, threshold2)
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
 
     # Calculate the number of non-zero pixels
     non_zero_pixels = np.count_nonzero(edges)
     return non_zero_pixels
 
 def calculate_perimeter(gray_arr):
-    # Apply edge detection
-    threshold1 = 100
-    threshold2 = 150
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), threshold1, threshold2)
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Apply Canny edge detection
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
+
+    # Dilate the edges to connect nearby edges
+    kernel = np.ones((5,5), np.uint8)
+    dilated_edges = cv2.dilate(edges, kernel, iterations=1)
+
+    # Find contours in the dilated edges
+    contours, hierarchy = cv2.findContours(dilated_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Find the index of the largest contour
     if len(contours) > 0:
-        contours = sorted(contours, key=cv2.contourArea, reverse=True)
-        perimeter = cv2.arcLength(contours[0], True)
+        largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
+
+        # Create a mask for the largest contour and fill it with 
+        mask = np.zeros_like(gray_arr)
+        cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
+
+        # Apply Canny edge detection
+        mask_edge = cv2.Canny(cv2.convertScaleAbs(mask), 100, 200)
+
+        # Calculate the number of non-zero pixels
+        perimeter = np.count_nonzero(mask_edge)
     else:
         perimeter = 0
-    return round(perimeter)
+    return perimeter
 
 def calculate_cb_cr_histogram(img_rgb):
     # Convert image to YCbCr color space
@@ -212,4 +225,34 @@ def calculate_a_b_histogram(imag_rgb):
     hist_a = cv2.calcHist([a], [0], None, [256], [0, 256]).flatten()
     hist_b = cv2.calcHist([b], [0], None, [256], [0, 256]).flatten()
     return hist_a, hist_b
+
+def calculate_mask_area(gray_arr):
+    # Get image height, width, channel
+    h, w = gray_arr.shape
+
+    # Apply Canny edge detection
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
+
+    # Dilate the edges to connect nearby edges
+    kernel = np.ones((5,5), np.uint8)
+    dilated_edges = cv2.dilate(edges, kernel, iterations=1)
+
+    # Find contours in the dilated edges
+    contours, hierarchy = cv2.findContours(dilated_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Find the index of the largest contour
+    if len(contours) > 0:
+        largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
+
+        # Create a mask for the largest contour and fill it with 
+        mask = np.zeros_like(gray_arr)
+        cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
+
+        # Calculate the number of non-zero pixels
+        non_zero_pixels = np.count_nonzero(mask)
+
+        mask_area = round((non_zero_pixels / (h * w)) * 100)
+    else:
+        mask_area = 0
+    return mask_area
 

@@ -85,6 +85,9 @@ def extract_features(images: Tensor):
         # Compute Lab color space a, b histogram
         a_hist, b_hist = calculate_a_b_histogram(img)
 
+        # Compute Mask Area
+        mask_area = [calculate_mask_area(gray_arr)]
+
         # Concatenate the features into a single array
         # You can add/remove features from the feature_list
         feature_list = [brightness, euler_number, irregularity_ratio, lines, circles]
