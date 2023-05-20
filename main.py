@@ -37,7 +37,7 @@ def extract_features(images: Tensor):
         # Compute the brightness of the image
         brightness = [calculate_brightness(gray)]
 
-        # Compute the contours
+        # Compute the number of contours
         contours = [calculate_contours(gray)]
 
         # Compute the Euler number
@@ -70,18 +70,37 @@ def extract_features(images: Tensor):
         # Compute Projection
         row_non_zeros, column_non_zeros = calculate_projection(gray_arr)
 
+        # Compute Entropy
+        entropy = [calculate_entropy(gray_arr)]
+
+        # Compute Edge image non-zero pixels
+        non_zero_pixels = [calculate_edge_non_zero_pixels(gray_arr)]
+
+        # Compute Perimeter
+        perimeter = [calculate_perimeter(gray_arr)]
+
+        # Compute YCbCr color space Cb, Cr histogram
+        cb_hist, cr_hist = calculate_cb_cr_histogram(img)
+
+        # Compute Lab color space a, b histogram
+        a_hist, b_hist = calculate_a_b_histogram(img)
+
         # Concatenate the features into a single array
-        # Place features that you want to use in the list
-        feature_list = []
-        feature = np.concatenate(feature_list)
+        feature = np.concatenate([brightness, contours,
+                                  h_hist, lines, circles,
+                                  entropy, rgb_hist, std_dev,
+                                  row_non_zeros, column_non_zeros,
+                                  non_zero_pixels, perimeter,
+                                  cb_hist, cr_hist,
+                                  a_hist, b_hist])
         
         features.append(feature)
     features = np.array(features)
     return features
 
 #-----------------------------------------------------------------------------------------------
-
-torch.manual_seed(0)
+# 1, 22
+torch.manual_seed(2)
 
 num_clusters = 10
 

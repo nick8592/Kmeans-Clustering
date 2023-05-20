@@ -3,6 +3,7 @@ import numpy as np
 from skimage import measure
 from skimage.feature import hog
 from sklearn.cluster import KMeans
+from scipy.stats import entropy
 
 def calculate_brightness(grayscale_image):
     # Calculate histogram
@@ -151,8 +152,64 @@ def calculate_dominate_color(img_rgb):
 
 def calculate_projection(gray_arr):
     # Apply edge detection (can be skipped if the input image is already an edge map)
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 50, 150, apertureSize=3)
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 150)
     # Calculate the non-zero values for each row and column
     row_non_zeros = np.count_nonzero(edges, axis=1)
     column_non_zeros = np.count_nonzero(edges, axis=0)
     return row_non_zeros, column_non_zeros
+
+def calculate_entropy(gray_arr):
+    # Calculate the histogram of pixel intensities
+    histogram = np.histogram(gray_arr, bins=256, range=(0, 256), density=True)[0]
+
+    # Calculate the entropy using the histogram
+    entropy_value = entropy(histogram, base=2)
+    return entropy_value
+
+def calculate_edge_non_zero_pixels(gray_arr):
+    # Apply edge detection
+    threshold1 = 100
+    threshold2 = 150
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), threshold1, threshold2)
+
+    # Calculate the number of non-zero pixels
+    non_zero_pixels = np.count_nonzero(edges)
+    return non_zero_pixels
+
+def calculate_perimeter(gray_arr):
+    # Apply edge detection
+    threshold1 = 100
+    threshold2 = 150
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), threshold1, threshold2)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if len(contours) > 0:
+        contours = sorted(contours, key=cv2.contourArea, reverse=True)
+        perimeter = cv2.arcLength(contours[0], True)
+    else:
+        perimeter = 0
+    return round(perimeter)
+
+def calculate_cb_cr_histogram(img_rgb):
+    # Convert image to YCbCr color space
+    image_ycrcb = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2YCrCb)
+
+    # Split the YCbCr image into channels
+    y, cb, cr = cv2.split(image_ycrcb)
+
+    # Calculate histograms for Cb and Cr channels
+    hist_cb = cv2.calcHist([cb], [0], None, [256], [0, 256]).flatten()
+    hist_cr = cv2.calcHist([cr], [0], None, [256], [0, 256]).flatten()
+    return hist_cb, hist_cr
+
+def calculate_a_b_histogram(imag_rgb):
+    # Convert image to Lab color space
+    image_lab = cv2.cvtColor(imag_rgb, cv2.COLOR_BGR2Lab)
+
+    # Split the Lab image into channels
+    l, a, b = cv2.split(image_lab)
+
+    # Calculate histograms for a and b channels
+    hist_a = cv2.calcHist([a], [0], None, [256], [0, 256]).flatten()
+    hist_b = cv2.calcHist([b], [0], None, [256], [0, 256]).flatten()
+    return hist_a, hist_b
+
