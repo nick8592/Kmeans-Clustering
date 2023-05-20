@@ -70,6 +70,9 @@ def extract_features(images: Tensor):
         # Compute Projection
         row_non_zeros, column_non_zeros = calculate_projection(gray_arr)
 
+        # Compute Entropy
+        entropy = [calculate_entropy(gray_arr)]
+
         # Concatenate the features into a single array
         feature = np.concatenate([brightness, contours,
                                   h_hist, lines, circles, hog_features,

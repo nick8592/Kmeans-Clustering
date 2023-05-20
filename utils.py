@@ -3,6 +3,7 @@ import numpy as np
 from skimage import measure
 from skimage.feature import hog
 from sklearn.cluster import KMeans
+from scipy.stats import entropy
 
 def calculate_brightness(grayscale_image):
     # Calculate histogram
@@ -156,3 +157,11 @@ def calculate_projection(gray_arr):
     row_non_zeros = np.count_nonzero(edges, axis=1)
     column_non_zeros = np.count_nonzero(edges, axis=0)
     return row_non_zeros, column_non_zeros
+
+def calculate_entropy(gray_arr):
+    # Calculate the histogram of pixel intensities
+    histogram = np.histogram(gray_arr, bins=256, range=(0, 256), density=True)[0]
+
+    # Calculate the entropy using the histogram
+    entropy_value = entropy(histogram, base=2)
+    return entropy_value
