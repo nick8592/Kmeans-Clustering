@@ -175,3 +175,16 @@ def calculate_edge_non_zero_pixels(gray_arr):
     # Calculate the number of non-zero pixels
     non_zero_pixels = np.count_nonzero(edges)
     return non_zero_pixels
+
+def calculate_perimeter(gray_arr):
+    # Apply edge detection
+    threshold1 = 100
+    threshold2 = 150
+    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), threshold1, threshold2)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if len(contours) > 0:
+        contours = sorted(contours, key=cv2.contourArea, reverse=True)
+        perimeter = cv2.arcLength(contours[0], True)
+    else:
+        perimeter = 0
+    return round(perimeter)

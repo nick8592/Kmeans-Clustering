@@ -37,7 +37,7 @@ def extract_features(images: Tensor):
         # Compute the brightness of the image
         brightness = [calculate_brightness(gray)]
 
-        # Compute the contours
+        # Compute the number of contours
         contours = [calculate_contours(gray)]
 
         # Compute the Euler number
@@ -76,19 +76,22 @@ def extract_features(images: Tensor):
         # Compute Edge image non-zero pixels
         non_zero_pixels = [calculate_edge_non_zero_pixels(gray_arr)]
 
+        # Compute Perimeter
+        perimeter = [calculate_perimeter(gray_arr)]
+
         # Concatenate the features into a single array
-        feature = np.concatenate([brightness, contours,
+        feature = np.concatenate([brightness, contours, hog_features,
                                   h_hist, lines, circles,
-                                  center1, center2, center3,
+                                  entropy, rgb_hist, std_dev,
                                   row_non_zeros, column_non_zeros,
-                                  non_zero_pixels])
+                                  non_zero_pixels, perimeter])
         
         features.append(feature)
     features = np.array(features)
     return features
 
 #-----------------------------------------------------------------------------------------------
-
+# 1, 22
 torch.manual_seed(1)
 
 num_clusters = 10
