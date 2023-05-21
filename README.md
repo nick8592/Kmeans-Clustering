@@ -1,15 +1,5 @@
 # Kmeans-Clustering
-K-means clustering is a popular unsupervised machine learning algorithm used for grouping similar data points into clusters. It aims to partition a dataset into K clusters, where each data point belongs to the cluster with the nearest mean value. K-means clustering is an iterative algorithm that follows these steps:
-
-1. Initialization: Select K initial cluster centroids randomly or based on some heuristic. These centroids represent the center of each cluster.
-
-2. Assignment: Assign each data point to the nearest centroid based on a distance metric, commonly the Euclidean distance. Each data point is assigned to the cluster with the closest centroid.
-
-3. Update: Recalculate the centroids for each cluster by taking the mean of all the data points assigned to that cluster. The centroid represents the new center of the cluster.
-
-4. Repeat: Iterate steps 2 and 3 until convergence criteria are met. Convergence occurs when the centroids no longer change significantly or when the maximum number of iterations is reached.
-
-After the algorithm converges, the K clusters are formed, and each data point is assigned to one of these clusters. K-means clustering aims to minimize the within-cluster sum of squares, meaning it tries to make the data points within each cluster as similar as possible.
+K-means clustering is a popular unsupervised machine learning algorithm used for grouping similar data points into clusters. It aims to partition a dataset into K clusters, where each data point belongs to the cluster with the nearest mean value.   
 
 To apply K-means clustering to image clustering, you can treat each image as a high-dimensional vector by representing it with features such as color histograms, pixel intensities, or deep learning embeddings.
 
