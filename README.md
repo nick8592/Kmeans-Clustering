@@ -1,5 +1,18 @@
 # Kmeans-Clustering
 
+## Rules
+ - Programs must be based on C/C++ or Python w/wo window interface
+
+## Requirements
+Please complete the following requirements
+1. The dimension of the feature vector must be more than 10.
+2. Use K-means clustering to classify the dataset (Total 10 categories)
+3. Calculate the **precision rate** and **recall rate** for each category.
+
+## Precision & Recall
+
+Precision can be seen as a measure of quality, and recall as a measure of quantity. Higher precision means that an algorithm returns more relevant results than irrelevant ones, and high recall means that an algorithm returns most of the relevant results (whether or not irrelevant ones are also returned). [For more...](https://en.wikipedia.org/wiki/Precision_and_recall)
+
 ## Features
 
 ### Dominate colors
@@ -12,10 +25,6 @@
 ### PCA
 
 [PCA Using Python: Image Compression](https://scicoding.com/pca-using-python-image-compression/)
-
-## Precision & Recall
-
-Precision can be seen as a measure of quality, and recall as a measure of quantity. Higher precision means that an algorithm returns more relevant results than irrelevant ones, and high recall means that an algorithm returns most of the relevant results (whether or not irrelevant ones are also returned). [For more...](https://en.wikipedia.org/wiki/Precision_and_recall)
 
 ## Installation
 
