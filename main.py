@@ -89,9 +89,9 @@ def extract_features(images: Tensor):
         mask_area = [calculate_mask_area(gray_arr)]
 
         # Concatenate the features into a single array
-        feature_list = [brightness, std_dev, entropy,
+        feature_list = [brightness, std_dev, entropy, lines, perimeter,
                         row_non_zeros, column_non_zeros, non_zero_pixels,
-                        a_hist, b_hist, rgb_hist, h_hist]
+                        h_hist, rgb_hist, a_hist, b_hist]
         feature = np.concatenate(feature_list)
         
         features.append(feature)

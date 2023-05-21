@@ -1,6 +1,8 @@
 # Kmeans-Clustering
 
 ## Features
+Here only list out the features that has been used in the `feature_list`.   
+Click the arrow to see that feature's advantage.
 
 <details>
   <summary>Brightness</summary>
@@ -21,6 +23,20 @@
 
 1. Texture Analysis: Entropy is particularly useful for capturing texture characteristics in an image. Images with homogeneous or regular textures tend to have low entropy values, indicating low information content, while images with complex or irregular textures have higher entropy values. Clustering based on entropy can help group images with similar textural properties.
 2. Scale and Rotation Invariance: Entropy is invariant to scale and rotation transformations. This means that clustering based on entropy can group together images with similar content regardless of their size or orientation. It allows for robust clustering across different scales and orientations.
+</details>
+
+<details>
+  <summary>Number of Lines</summary>
+
+1. Line Detection: The Hough transform is a powerful technique for detecting lines in an image. By applying the Hough transform, you can identify and extract the lines present in the image. Counting the number of detected lines provides a measure of the line density or complexity, which can be used as a feature for clustering.
+2. Structural Information: Lines in an image often represent important structural elements or patterns. By quantifying the number of lines, you capture the structural information of the image. Clustering based on line features allows for grouping images with similar structural characteristics or visual patterns defined by lines.
+</details>
+
+<details>
+  <summary>Perimeter</summary>
+
+1. Object Size Estimation: The perimeter of the largest contour provides an estimate of the size of the main object in the image. By measuring the length of the contour, you can quantify the object's boundary complexity and approximate its size. Clustering based on the largest contour's perimeter allows for grouping images with similar-sized objects.
+2. Shape Information: The largest contour represents the outline or boundary of the main object in the image. Analyzing its perimeter allows you to extract valuable shape information about the object. Characteristics such as curvature, corners, or smoothness can be inferred from the contour's perimeter. Clustering based on these shape features enables grouping images with similar object shapes.
 </details>
 
 <details>
@@ -58,21 +74,6 @@
 2. Rotation and Translation Invariance: The numbers of non-zero pixels are invariant to rotation and translation transformations. This means that clustering based on these features can effectively group images with similar object shapes, regardless of their orientation or position within the image. It allows for robust clustering across different object orientations and placements.
 </details>
 
-<details>
-  <summary>Dominate colors</summary>
-
-[Extract dominant colors of an image using Python](https://www.geeksforgeeks.org/extract-dominant-colors-of-an-image-using-python/)   
-[ImageDominantColor](https://pypi.org/project/imagedominantcolor/)   
-[Finding the Most Common Colors in Python](https://towardsdatascience.com/finding-most-common-colors-in-python-47ea0767a06a)   
-[Dominant Color Extraction Dominance and Recoloring](https://github.com/srijannnd/Dominant-Color-Extraction-Dominance-and-Recoloring.git)
-</details>
-
-<details>
-  <summary>PCA</summary>
-
-[PCA Using Python: Image Compression](https://scicoding.com/pca-using-python-image-compression/)
-</details>
-
 ## Precision & Recall
 
 Precision can be seen as a measure of quality, and recall as a measure of quantity. Higher precision means that an algorithm returns more relevant results than irrelevant ones, and high recall means that an algorithm returns most of the relevant results (whether or not irrelevant ones are also returned). [For more...](https://en.wikipedia.org/wiki/Precision_and_recall)   
@@ -99,3 +100,19 @@ python <feature>.py <---- replace <feature> with the filename you want to execut
 (e.g.) python circle.py
 ```
 Real feature method used in `main.py` please check out `utils.py`
+
+## References
+<details>
+  <summary>Dominate colors</summary>
+
+[Extract dominant colors of an image using Python](https://www.geeksforgeeks.org/extract-dominant-colors-of-an-image-using-python/)   
+[ImageDominantColor](https://pypi.org/project/imagedominantcolor/)   
+[Finding the Most Common Colors in Python](https://towardsdatascience.com/finding-most-common-colors-in-python-47ea0767a06a)   
+[Dominant Color Extraction Dominance and Recoloring](https://github.com/srijannnd/Dominant-Color-Extraction-Dominance-and-Recoloring.git)
+</details>
+
+<details>
+  <summary>PCA</summary>
+
+[PCA Using Python: Image Compression](https://scicoding.com/pca-using-python-image-compression/)
+</details>
