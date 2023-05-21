@@ -89,13 +89,9 @@ def extract_features(images: Tensor):
         mask_area = [calculate_mask_area(gray_arr)]
 
         # Concatenate the features into a single array
-        feature_list = [brightness, contours, mask_area,
-                        h_hist, lines, circles,
-                        entropy, rgb_hist, std_dev,
-                        row_non_zeros, column_non_zeros,
-                        non_zero_pixels, perimeter,
-                        cb_hist, cr_hist,
-                        a_hist, b_hist]
+        feature_list = [brightness, std_dev, entropy,
+                        row_non_zeros, column_non_zeros, non_zero_pixels,
+                        a_hist, b_hist, rgb_hist, h_hist]
         feature = np.concatenate(feature_list)
         
         features.append(feature)
@@ -185,19 +181,18 @@ for random_state in tqdm(range(100), desc='Find Best Random State'):
 # Predict the clusters for the test images
 print(f"Val Labels: \n{val_labels}")
 print(f"Predicted Labels: \n{best_predicted_labels}")
-
+print('==========================================================================')
 print(f"Features Num: {scaled_train_features.shape[1]}")
 print(f"Best random seed: {seed}")
 print(f"Best random_state: {best_random_state}")
-print(f"Best Total Precision: {best_precision:.4f}, Best Total Recall: {best_recall:.4f}")
-
-for item in range(0, 10):
-    val = [1 if n == item else 0 for n in val_labels]
-    pred = [1 if n == item else 0 for n in best_predicted_labels]
+print('==========================================================================')
+print(f"{'Class':13} |  {'Precision'}  |  {'Recall'}")
+print('------------------------------------------')
+for key, value in classes.items():
+    val = [1 if n == value else 0 for n in val_labels]
+    pred = [1 if n == value else 0 for n in best_predicted_labels]
     pre = precision_score(val, pred, average='binary', zero_division=1)
     rec = recall_score(val, pred, average='binary', zero_division=1)
-    print(f"Label {item}: Precision={pre:.4f}, Recall={rec:.4f}")
-
-
-
-
+    print(f"{key:13} |     {pre:.4f}  |  {rec:.4f}")
+print('------------------------------------------')
+print(f"{'Total':13} |     {best_precision:.4f}  |  {best_recall:.4f}")
