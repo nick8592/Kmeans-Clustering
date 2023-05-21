@@ -33,7 +33,7 @@ pip install -r requirements.txt
 
 ## Example
 
-Add/Remove features in your `feature_list` in `main.py` at [line 90](https://github.com/nick8592/Kmeans-Clustering/blob/dd5a1515ab006817ac3a2941ab1e4a8042ce67f2/main.py#L90).  
+Add/Remove features in your `feature_list` in `main.py` at [line 93](https://github.com/nick8592/Kmeans-Clustering/blob/eff03ee50baf5d9ad0eab80e8e692c8bf9757d9e/main.py#L93).  
 You can place in any kinds of feature in `feature_list`.
 
 ```
