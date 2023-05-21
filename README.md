@@ -52,26 +52,32 @@ You should see the results looks like below format.
 
 ```
 Val Labels:
-[9 7 3 3 5 2 1 1 6 2 7 6 3 0 4 8 1 6 1 1 6 9 3 7 4 5 7 5 2 6 9 7 5 3 4 0 2
- 5 4 8 8 5 0 9 9 4 2 3 5 6 6 1 3 0 2 8 8 0 2 9 3 6 9 4 8 9 8 4 1 7 0 5 5 4
- 9 1 0 2 7 8 7 3 6 5 0 2 4 8 8 9 0 0 3 7 6 1 1 7 4 2]
+[7 6 0 5 5 7 1 9 8 3 8 5 6 7 9 9 0 2 2 6 4 2 3 4 0 3 7 3 2 0 1 5 9 9 9 7 6
+ 0 7 9 3 1 6 1 3 2 6 1 1 8 5 5 7 8 5 6 8 5 8 0 8 4 1 3 8 4 3 9 0 4 5 5 6 4
+ 2 1 1 6 4 4 7 3 0 2 3 8 4 4 0 6 1 9 2 0 2 2 8 7 7 9]
 Predicted Labels:
-[3 7 3 3 8 8 3 3 7 7 7 2 3 5 3 3 8 7 3 3 8 9 3 7 3 8 7 7 9 2 9 7 8 3 7 3 3
- 7 3 3 3 8 3 9 9 3 8 3 8 7 7 7 7 3 9 3 3 3 9 3 3 7 3 3 3 9 3 3 3 3 3 8 7 3
- 9 3 3 8 7 3 7 3 7 7 3 8 3 3 3 9 7 5 3 7 9 3 3 7 7 8]
-Features Num: 64397
-Best random_state: 23
-Highest Total Precision: 0.2500, Highest Total Recall: 0.2500
-Label 0: Precision=1.0000, Recall=0.0000
-Label 1: Precision=1.0000, Recall=0.0000
-Label 2: Precision=0.0000, Recall=0.0000
-Label 3: Precision=0.1915, Recall=0.9000
-Label 4: Precision=1.0000, Recall=0.0000
-Label 5: Precision=0.0000, Recall=0.0000
-Label 6: Precision=1.0000, Recall=0.0000
-Label 7: Precision=0.3600, Recall=0.9000
-Label 8: Precision=0.0000, Recall=0.0000
-Label 9: Precision=0.6364, Recall=0.7000
+[7 7 3 8 5 7 1 3 3 1 7 1 7 7 0 7 1 2 5 1 7 5 1 1 1 1 7 5 0 5 1 5 1 5 5 3 1
+ 1 7 1 1 7 8 1 1 1 9 7 1 1 1 8 7 7 5 5 1 5 5 4 5 7 1 7 5 7 1 5 7 1 5 1 7 7
+ 1 5 7 9 7 7 7 3 4 2 7 1 1 7 3 7 1 8 0 3 8 1 7 7 7 0]
+==========================================================================
+Features Num: 5
+Best random seed: 210
+Best random_state: 32
+==========================================================================
+Class         |  Precision  |  Recall
+------------------------------------------
+10_flower     |     0.0000  |  0.0000
+1_horse       |     0.1935  |  0.6000
+2_plane       |     1.0000  |  0.2000
+3_rooster     |     0.1429  |  0.1000
+4_tree        |     0.0000  |  0.0000
+5_sailboat    |     0.2941  |  0.5000
+6_motorcycle  |     1.0000  |  0.0000
+7_car         |     0.3000  |  0.9000
+8_butterfly   |     0.0000  |  0.0000
+9_dragonfly   |     0.0000  |  0.0000
+------------------------------------------
+Total         |     0.2300  |  0.2300
 ```
 
 > Note: The `1.000` in Precision is incorrect, it may be because of dividing by 0 when calculate the precision, resulting in an output of 1.
