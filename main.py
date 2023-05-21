@@ -99,7 +99,6 @@ def extract_features(images: Tensor):
     return features
 
 #-----------------------------------------------------------------------------------------------
-# 1, 22
 seed = 210
 torch.manual_seed(seed)
 
