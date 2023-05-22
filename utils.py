@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from skimage import measure
-from skimage.feature import hog
+from skimage.feature import hog, graycomatrix, graycoprops
 from sklearn.cluster import KMeans
 from scipy.stats import entropy
 
@@ -17,7 +17,7 @@ def calculate_brightness(grayscale_image):
         brightness += ratio * (-scale + index)
 
     value = 1 if brightness == 255 else brightness / scale
-    value = round(value, 4)
+    value = [round(value, 4)]
     return value
 
 def calculate_contours(grayscale_image, threshold:int = 128):
@@ -92,7 +92,7 @@ def calculate_hog(gray_arr):
 
 def calculate_standard_deviation(gray_arr):
     # Calculate standard deviation
-    std_dev = np.std(gray_arr)
+    std_dev = [np.std(gray_arr)]
     return std_dev
 
 def calculate_edge_histogram(img_rgb, gray_arr):
@@ -163,7 +163,7 @@ def calculate_entropy(gray_arr):
     histogram = np.histogram(gray_arr, bins=256, range=(0, 256), density=True)[0]
 
     # Calculate the entropy using the histogram
-    entropy_value = entropy(histogram, base=2)
+    entropy_value = [entropy(histogram, base=2)]
     return entropy_value
 
 def calculate_edge_non_zero_pixels(gray_arr):
@@ -256,3 +256,72 @@ def calculate_mask_area(gray_arr):
         mask_area = 0
     return mask_area
 
+def calculate_gradient(gray_arr, image_rgb):
+    # 計算灰度影像的梯度
+    gradient_x = cv2.Sobel(gray_arr, cv2.CV_64F, 1, 0, ksize=3)
+    gradient_y = cv2.Sobel(gray_arr, cv2.CV_64F, 0, 1, ksize=3)
+
+    # 計算每個色彩通道的梯度
+    gradient_r = cv2.Sobel(image_rgb[:,:,2], cv2.CV_64F, 1, 1, ksize=3)
+    gradient_g = cv2.Sobel(image_rgb[:,:,1], cv2.CV_64F, 1, 1, ksize=3)
+    gradient_b = cv2.Sobel(image_rgb[:,:,0], cv2.CV_64F, 1, 1, ksize=3)
+
+    # 計算梯度特徵
+    gradient = np.array([np.mean(gradient_x), np.mean(gradient_y),
+                         np.mean(gradient_r), np.mean(gradient_g), np.mean(gradient_b)]).tolist()
+    return gradient
+
+def calculate_texture(gray_image):
+    # 設定GLCM的參數
+    distances = [1] # 鄰域距離
+    angles = [0, np.pi/4, np.pi/2, 3*np.pi/4] # 鄰域方向
+
+    # 計算GLCM
+    gray_image = (gray_image * 255).astype(np.uint8)
+    glcm = graycomatrix(gray_image, distances=distances, angles=angles, symmetric=True, normed=True)
+
+    # 提取紋理特徵
+    # 計算對比度-較高的對比度值表示圖像中不同區域之間的亮度差異較大
+    contrast = graycoprops(glcm, prop='contrast')
+    # 計算不相似度-較高的不相似度值表示圖像中不同區域之間的灰度差異較大
+    dissimilarity = graycoprops(glcm, prop='dissimilarity')
+    #計算均勻度-較高的均勻度值表示圖像中不同區域之間的灰度值較為均勻
+    homogeneity = graycoprops(glcm, prop='homogeneity')
+    # #計算能量-較高的能量值表示圖像中灰度值的分佈較平均
+    # energy = graycoprops(glcm, prop='energy')
+    #計算相關性-較接近1的相關性值表示圖像中不同區域之間的灰度變化趨勢相似
+    correlation = graycoprops(glcm, prop='correlation')
+    # #計算角二階矩值-較高的ASM值表示圖像中灰度值的分佈較平坦
+    # ASM = graycoprops(glcm, prop='ASM')
+
+    texture_array = np.hstack((contrast, dissimilarity, homogeneity, correlation))
+    texture_array = np.squeeze(texture_array)
+    texture_list = texture_array.tolist()
+    return texture_list
+
+def calculate_rgb_standard_deviation(image_rgb):
+    # Calculate the standard deviation of the RGB image
+    rgb_std_dev = np.std(image_rgb, axis=(0, 1)).tolist()
+    return rgb_std_dev
+
+def calculate_variance(gray_image):
+    # Calculate the variance of the grayscale image
+    variance = [np.var(gray_image)]
+    return variance
+
+def calculate_freq_std(gray_image):
+    # Perform Fourier Transform
+    f = np.fft.fft2(gray_image)
+    fshift = np.fft.fftshift(f)
+
+    # Convert the magnitude spectrum to logarithmic scale
+    magnitude_spectrum = 20 * np.log(np.abs(fshift))
+
+    # Calculate the standard deviation of the magnitude spectrum
+    freq_std_dev = [np.std(magnitude_spectrum)]
+    return freq_std_dev
+
+def calculate_mean_channel(image_rgb):
+    # Calculate the mean channel value of the RGB image
+    mean_channel_value = np.mean(image_rgb, axis=(0, 1)).tolist()
+    return mean_channel_value

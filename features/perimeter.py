@@ -15,6 +15,7 @@ path_0 = "../dataset/train/10_flower/flower_001.jpg"
 img_path = [path_1, path_2, path_3, path_4, path_5,
             path_6, path_7, path_8, path_9, path_0]
 
+i = 1
 for path in img_path:
     # Load the image
     image = cv2.imread(path)
@@ -46,12 +47,16 @@ for path in img_path:
     non_zero_pixels = np.count_nonzero(mask_edge)
 
     # Print the result
-    print("Number of non-zero pixels in the edge image:", non_zero_pixels)
+    print(path)
+    print("Perimeter:", non_zero_pixels)
 
-    # Show the original image and the segmented image
-    cv2.imshow('mask', mask)
+    # Save the final edge image
+    cv2.imwrite(f'output/perimeter/{i:02}.png', mask_edge)
+
+    # Show the final edge image
     cv2.imshow('mask edge', mask_edge)
 
     # Wait for a key press and then close the windows
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    i += 1

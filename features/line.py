@@ -45,7 +45,7 @@ else:
         y2 = int(y0 - 1000 * (a))
         cv2.line(color_img, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
-    cv2.imwrite('line.png', color_img)
+    cv2.imwrite('output/line/line.png', color_img)
 
     # Display the result
     cv2.imshow("Detected Lines", color_img)
