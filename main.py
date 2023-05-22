@@ -23,7 +23,7 @@ def extract_features(images: Tensor):
         array = images[i].numpy()
 
         # Transpose the numpy array to match the format expected by OpenCV (H, W, C)
-        img = np.transpose(array, (1, 2, 0))
+        img = np.transpose(array, (1, 2, 0))*255
 
         # Convert the numpy array to an OpenCV image in grayscale format
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -62,13 +62,13 @@ def extract_features(images: Tensor):
         std_dev = calculate_standard_deviation(gray_arr)
 
         # Compute Edgewise RGB histogram
-        rgb_hist = calculate_edge_histogram(img, gray_arr)
+        rgb_hist = calculate_edge_histogram(img, gray)
 
         # Compute Dominate Color
         # center1, center2, center3 = calculate_dominate_color(img)
 
         # Compute Projection
-        row_non_zeros, column_non_zeros = calculate_projection(gray_arr)
+        row_non_zeros, column_non_zeros = calculate_projection(gray)
 
         # Compute Entropy
         entropy = calculate_entropy(gray_arr)
@@ -107,9 +107,25 @@ def extract_features(images: Tensor):
         # mean_channel_value = calculate_mean_channel(img)
 
         # Concatenate the features into a single array
+        # feature_list = [brightness, std_dev, entropy, lines, perimeter,
+        #                 row_non_zeros, column_non_zeros, non_zero_pixels,
+        #                 h_hist, rgb_hist, a_hist, b_hist]
         feature_list = [brightness, std_dev, entropy, lines, perimeter,
                         row_non_zeros, column_non_zeros, non_zero_pixels,
-                        h_hist, rgb_hist, a_hist, b_hist]
+                        h_hist*3, rgb_hist, a_hist*3, b_hist*3]
+        # print(f"Brightness: {len(brightness)}")
+        # print(f"Standard Deviation: {len(std_dev)}")
+        # print(f"Entropy: {len(entropy)}")
+        # print(f"Lines: {len(lines)}")
+        # print(f"Perimeter: {len(perimeter)}")
+        # print(f"Row non-zeros: {len(row_non_zeros)}")
+        # print(f"Cloumn non-zeros: {len(column_non_zeros)}")
+        # print(f"Non-zeros: {len(non_zero_pixels)}")
+        # print(f"Hue Hist: {len(h_hist)}")
+        # print(f"RGB Hist: {len(rgb_hist)}")
+        # print(f"a Hist: {len(a_hist)}")
+        # print(f"b Hist: {len(b_hist)}")
+        # input()
         feature = np.concatenate(feature_list)
         
         features.append(feature)
