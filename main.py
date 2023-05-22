@@ -92,7 +92,7 @@ def extract_features(images: Tensor):
         # gradient = calculate_gradient(gray_arr, img)
 
         # Compute Texture
-        # texture = calculate_texture(gray_arr)
+        texture = calculate_texture(gray_arr)
 
         # Compute RGB Standard Deviation
         # rgb_std_dev = calculate_rgb_standard_deviation(img)
@@ -110,9 +110,9 @@ def extract_features(images: Tensor):
         # feature_list = [brightness, std_dev, entropy, lines, perimeter,
         #                 row_non_zeros, column_non_zeros, non_zero_pixels,
         #                 h_hist, rgb_hist, a_hist, b_hist]
-        feature_list = [brightness, std_dev, entropy, lines, perimeter,
+        feature_list = [brightness, std_dev, entropy*10, lines, perimeter,
                         row_non_zeros, column_non_zeros, non_zero_pixels,
-                        h_hist*3, rgb_hist, a_hist*3, b_hist*3]
+                        h_hist, rgb_hist, a_hist, b_hist]
         # print(f"Brightness: {len(brightness)}")
         # print(f"Standard Deviation: {len(std_dev)}")
         # print(f"Entropy: {len(entropy)}")
