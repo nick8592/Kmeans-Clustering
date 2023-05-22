@@ -38,19 +38,19 @@ def extract_features(images: Tensor):
         brightness = calculate_brightness(gray)
 
         # Compute the number of contours
-        # contours = [calculate_contours(gray)]
+        # contours = calculate_contours(gray)
 
         # Compute the Euler number
-        # euler_number = [calculate_euler_number(gray_arr)]
+        # euler_number = calculate_euler_number(gray_arr)
 
         # Compute the irregularity ratio
-        # irregularity_ratio = [calculate_irregularity_ratio(gray_arr)]
+        # irregularity_ratio = calculate_irregularity_ratio(gray_arr)
 
         # Compute Hue histogram
         h_hist = calculate_h_histogram(img)
 
         # Compute Number of lines using Hough Transform
-        lines = [calculate_lines(gray_blur)]
+        lines = calculate_lines(gray_blur)
 
         # Compute Number of circles using Hough Transform
         # circles = [calculate_lines(gray_blur)]
@@ -77,7 +77,7 @@ def extract_features(images: Tensor):
         non_zero_pixels = calculate_non_zero_pixels(gray_arr)
 
         # Compute Perimeter
-        perimeter = [calculate_perimeter(gray_arr)]
+        perimeter = calculate_perimeter(gray_arr)
 
         # Compute YCbCr color space Cb, Cr histogram
         # cb_hist, cr_hist = calculate_cb_cr_histogram(img)
@@ -86,7 +86,7 @@ def extract_features(images: Tensor):
         a_hist, b_hist = calculate_a_b_histogram(img)
 
         # Compute Mask Area
-        # mask_area = [calculate_mask_area(gray_arr)]
+        # mask_area = calculate_mask_area(gray_arr)
 
         # Compute Gradient
         # gradient = calculate_gradient(gray_arr, img)
