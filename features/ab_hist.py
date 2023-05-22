@@ -1,7 +1,6 @@
-from PIL import Image
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 
 path_1 = "../dataset/train/1_horse/horse_008.jpg"
 path_2 = "../dataset/train/2_plane/plane_001.jpg"
@@ -25,25 +24,41 @@ for path in img_path:
     image = cv2.imread(path)
 
     # Convert image to Lab color space
-    image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    image_lab = cv2.cvtColor(image, cv2.COLOR_BGR2Lab)
 
-    # Save the hsv image
-    cv2.imwrite(f'output/HSV/{classes[item]}.png', image_hsv)
+    # Save the ab image
+    cv2.imwrite(f'output/Lab/{classes[item]}.png', image_lab)
 
-    # Show the original image and the hsv image
+    # Show the original image and the ab image
     cv2.imshow('Original', image)
-    cv2.imshow('HSV image', image_hsv)
+    cv2.imshow('Lab image', image_lab)
 
     # Wait for a key press and then close the windows
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     item += 1
 
-    img_array = np.array(image_hsv)
-    h_channel = img_array[:, :, 0]
-    hist, bins = np.histogram(h_channel, bins=180, range=[0, 180])
+    # Split the Lab image into channels
+    l, a, b = cv2.split(image_lab)
 
-    plt.bar(bins[:-1], hist, width=1)
-    plt.xlabel('H value')
+    # Calculate histograms for a and b channels
+    hist_a = cv2.calcHist([a], [0], None, [256], [0, 256]).flatten()
+    hist_b = cv2.calcHist([b], [0], None, [256], [0, 256]).flatten()
+
+    # Display the histograms
+    plt.figure(figsize=(10, 4))
+
+    plt.subplot(1, 2, 1)
+    plt.plot(hist_a, color='g')
+    plt.title('a Histogram')
+    plt.xlabel('Bins')
     plt.ylabel('Frequency')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(hist_b, color='r')
+    plt.title('b Histogram')
+    plt.xlabel('Bins')
+    plt.ylabel('Frequency')
+
+    plt.tight_layout()
     # plt.show()

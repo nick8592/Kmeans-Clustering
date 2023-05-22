@@ -1,18 +1,18 @@
 import cv2
 import numpy as np
 
-path_1 = "dataset/train/1_horse/horse_003.jpg"
-path_2 = "dataset/train/2_plane/plane_002.jpg"
-path_3 = "dataset/train/3_rooster/rooster_001.jpg"
-path_4 = "dataset/train/4_tree/tree_001.jpg"
-path_5 = "dataset/train/5_sailboat/sailboat_001.jpg"
-path_6 = "dataset/train/6_motorcycle/motorcycle_001.jpg"
-path_7 = "dataset/train/7_car/car_001.jpg"
-path_8 = "dataset/train/8_butterfly/butterfly_001.jpg"
-path_9 = "dataset/train/9_dragonfly/dragonfly_001.jpg"
-path_0 = "dataset/train/10_flower/flower_001.jpg"
+path_1 = "../dataset/train/1_horse/horse_003.jpg"
+path_2 = "../dataset/train/2_plane/plane_002.jpg"
+path_3 = "../dataset/train/3_rooster/rooster_001.jpg"
+path_4 = "../dataset/train/4_tree/tree_003.jpg"
+path_5 = "../dataset/train/5_sailboat/sailboat_001.jpg"
+path_6 = "../dataset/train/6_motorcycle/motorcycle_001.jpg"
+path_7 = "../dataset/train/7_car/car_001.jpg"
+path_8 = "../dataset/train/8_butterfly/butterfly_001.jpg"
+path_9 = "../dataset/train/9_dragonfly/dragonfly_001.jpg"
+path_0 = "../dataset/train/10_flower/flower_001.jpg"
 
-img_path = path_0
+img_path = path_4
 img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
 
 # Apply Gaussian blur with a kernel size of 5x5
@@ -44,6 +44,8 @@ else:
         x2 = int(x0 - 1000 * (-b))
         y2 = int(y0 - 1000 * (a))
         cv2.line(color_img, (x1, y1), (x2, y2), (0, 0, 255), 2)
+
+    cv2.imwrite('output/line/line.png', color_img)
 
     # Display the result
     cv2.imshow("Detected Lines", color_img)

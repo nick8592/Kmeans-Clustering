@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-path_1 = "../dataset/train/1_horse/horse_001.jpg"
+path_1 = "../dataset/train/1_horse/horse_008.jpg"
 path_2 = "../dataset/train/2_plane/plane_001.jpg"
 path_3 = "../dataset/train/3_rooster/rooster_001.jpg"
 path_4 = "../dataset/train/4_tree/tree_001.jpg"
@@ -16,6 +16,9 @@ path_0 = "../dataset/train/10_flower/flower_001.jpg"
 img_path = [path_1, path_2, path_3, path_4, path_5,
             path_6, path_7, path_8, path_9, path_0]
 
+classes = ['horse', 'plane', 'rooster', 'tree', 'sailboat',
+           'motorycle', 'car', 'butterfly', 'dragonfly', 'flower']
+item = 0
 for path in img_path:
     # Load the image
     img = cv2.imread(path)
@@ -59,7 +62,10 @@ for path in img_path:
     plt.xlabel('Intensity')
     plt.ylabel('Frequency')
     plt.title('RGB Histogram of the Masked Image')
-    plt.show()
+    # plt.show()
+
+    # Save the segmented image
+    cv2.imwrite(f'output/rgb_hist/{classes[item]}.png', masked_img)
 
     # Show the original image and the segmented image
     cv2.imshow('Original', img)
@@ -68,3 +74,4 @@ for path in img_path:
     # Wait for a key press and then close the windows
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    item += 1

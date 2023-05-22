@@ -93,5 +93,4 @@ Class         |  Precision  |  Recall
 ------------------------------------------
 Total         |     0.2300  |  0.2300
 ```
-
-> Note: The `1.000` in Precision is incorrect, it may be because of dividing by 0 when calculate the precision, resulting in an output of 1.
+Real feature method used in `main.py` please check out `utils.py`

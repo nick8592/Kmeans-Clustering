@@ -35,16 +35,16 @@ def extract_features(images: Tensor):
         gray_blur = cv2.GaussianBlur(gray_arr, (5, 5), 0)
 
         # Compute the brightness of the image
-        brightness = [calculate_brightness(gray)]
+        brightness = calculate_brightness(gray)
 
         # Compute the number of contours
-        contours = [calculate_contours(gray)]
+        # contours = [calculate_contours(gray)]
 
         # Compute the Euler number
-        euler_number = [calculate_euler_number(gray_arr)]
+        # euler_number = [calculate_euler_number(gray_arr)]
 
         # Compute the irregularity ratio
-        irregularity_ratio = [calculate_irregularity_ratio(gray_arr)]
+        # irregularity_ratio = [calculate_irregularity_ratio(gray_arr)]
 
         # Compute Hue histogram
         h_hist = calculate_h_histogram(img)
@@ -53,40 +53,58 @@ def extract_features(images: Tensor):
         lines = [calculate_lines(gray_blur)]
 
         # Compute Number of circles using Hough Transform
-        circles = [calculate_lines(gray_blur)]
+        # circles = [calculate_lines(gray_blur)]
 
         # Compute HOG
-        hog_features = calculate_hog(gray_arr)
+        # hog_features = calculate_hog(gray_arr)
 
         # Compute Standard Deviation
-        std_dev = [calculate_standard_deviation(gray_arr)]
+        std_dev = calculate_standard_deviation(gray_arr)
 
         # Compute Edgewise RGB histogram
         rgb_hist = calculate_edge_histogram(img, gray_arr)
 
         # Compute Dominate Color
-        center1, center2, center3 = calculate_dominate_color(img)
+        # center1, center2, center3 = calculate_dominate_color(img)
 
         # Compute Projection
         row_non_zeros, column_non_zeros = calculate_projection(gray_arr)
 
         # Compute Entropy
-        entropy = [calculate_entropy(gray_arr)]
+        entropy = calculate_entropy(gray_arr)
 
         # Compute Edge image non-zero pixels
-        non_zero_pixels = [calculate_edge_non_zero_pixels(gray_arr)]
+        non_zero_pixels = calculate_non_zero_pixels(gray_arr)
 
         # Compute Perimeter
         perimeter = [calculate_perimeter(gray_arr)]
 
         # Compute YCbCr color space Cb, Cr histogram
-        cb_hist, cr_hist = calculate_cb_cr_histogram(img)
+        # cb_hist, cr_hist = calculate_cb_cr_histogram(img)
 
         # Compute Lab color space a, b histogram
         a_hist, b_hist = calculate_a_b_histogram(img)
 
         # Compute Mask Area
-        mask_area = [calculate_mask_area(gray_arr)]
+        # mask_area = [calculate_mask_area(gray_arr)]
+
+        # Compute Gradient
+        # gradient = calculate_gradient(gray_arr, img)
+
+        # Compute Texture
+        # texture = calculate_texture(gray_arr)
+
+        # Compute RGB Standard Deviation
+        # rgb_std_dev = calculate_rgb_standard_deviation(img)
+
+        # Compute Variance
+        # variance = calculate_variance(gray_arr)
+
+        # Compute Frequency domain Standard Deviation
+        # freq_std_dev = calculate_freq_std(gray_arr)
+
+        # Compute Mean Channel Value
+        # mean_channel_value = calculate_mean_channel(img)
 
         # Concatenate the features into a single array
         # You can add/remove features from the feature_list
