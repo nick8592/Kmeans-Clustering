@@ -95,3 +95,19 @@ Total         |     0.2300  |  0.2300
 ```
 
 > Note: The `1.000` in Precision is incorrect, it may be because of dividing by 0 when calculate the precision, resulting in an output of 1.
+
+## References
+<details>
+  <summary>Dominate colors</summary>
+
+[Extract dominant colors of an image using Python](https://www.geeksforgeeks.org/extract-dominant-colors-of-an-image-using-python/)   
+[ImageDominantColor](https://pypi.org/project/imagedominantcolor/)   
+[Finding the Most Common Colors in Python](https://towardsdatascience.com/finding-most-common-colors-in-python-47ea0767a06a)   
+[Dominant Color Extraction Dominance and Recoloring](https://github.com/srijannnd/Dominant-Color-Extraction-Dominance-and-Recoloring.git)
+</details>
+
+<details>
+  <summary>PCA</summary>
+
+[PCA Using Python: Image Compression](https://scicoding.com/pca-using-python-image-compression/)
+</details>

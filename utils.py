@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from skimage import measure
-from skimage.feature import hog
+from skimage.feature import hog, graycomatrix, graycoprops
 from sklearn.cluster import KMeans
 from scipy.stats import entropy
 
@@ -17,7 +17,7 @@ def calculate_brightness(grayscale_image):
         brightness += ratio * (-scale + index)
 
     value = 1 if brightness == 255 else brightness / scale
-    value = round(value, 4)
+    value = [round(value, 4)]
     return value
 
 def calculate_contours(grayscale_image, threshold:int = 128):
@@ -31,7 +31,7 @@ def calculate_contours(grayscale_image, threshold:int = 128):
     contours = measure.find_contours(img_arr, 0.5)
 
     # Calculate the number of contours
-    num_contours = len(contours)
+    num_contours = [len(contours)]
     return num_contours
 
 def calculate_euler_number(gray_arr):
@@ -44,12 +44,12 @@ def calculate_euler_number(gray_arr):
             d = gray_arr[i+1][j+1]
             if (a != b) or (a != c) or (a != d):
                 euler_number += 1
-    return euler_number
+    return [euler_number]
 
 def calculate_irregularity_ratio(gray_arr):
     std_dev = np.std(gray_arr)
     mean = np.mean(gray_arr)
-    irregularity_ratio = std_dev/mean
+    irregularity_ratio = [std_dev/mean]
     return irregularity_ratio
 
 def calculate_h_histogram(img_rgb):
@@ -72,9 +72,9 @@ def calculate_lines(gray_blur):
 
     # Output the number of detected lines
     if lines is not None:
-        return len(lines)
+        return [len(lines)]
     else:
-        return 0
+        return [0]
 
 def calculate_circles(gray_blur):
     # Detect circles using HoughCircles function
@@ -92,12 +92,13 @@ def calculate_hog(gray_arr):
 
 def calculate_standard_deviation(gray_arr):
     # Calculate standard deviation
-    std_dev = np.std(gray_arr)
+    std_dev = [np.std(gray_arr)]
     return std_dev
 
-def calculate_edge_histogram(img_rgb, gray_arr):
+def calculate_edge_histogram(img_rgb, gray):
     # Apply Canny edge detection
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
+    gray = gray.astype(np.uint8)
+    edges = cv2.Canny(gray, 100, 200)
 
     # Dilate the edges to connect nearby edges
     kernel = np.ones((5,5), np.uint8)
@@ -111,11 +112,8 @@ def calculate_edge_histogram(img_rgb, gray_arr):
         # Find the index of the largest contour
         largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
 
-        # Find the index of the largest contour
-        largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
-
         # Create a mask for the largest contour and fill it with 
-        mask = np.zeros_like(gray_arr)
+        mask = np.zeros_like(gray)
         cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
 
         # Calculate the area of the mask
@@ -150,12 +148,36 @@ def calculate_dominate_color(img_rgb):
     center3 = (centers.cluster_centers_[2]*255).astype(int)
     return center1, center2, center3
 
-def calculate_projection(gray_arr):
-    # Apply edge detection (can be skipped if the input image is already an edge map)
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
-    # Calculate the non-zero values for each row and column
-    row_non_zeros = np.count_nonzero(edges, axis=1)
-    column_non_zeros = np.count_nonzero(edges, axis=0)
+def calculate_projection(gray):
+    # Apply Canny edge detection
+    gray = gray.astype(np.uint8)
+    edges = cv2.Canny(gray, 100, 200)
+
+    # Dilate the edges to connect nearby edges
+    kernel = np.ones((5,5), np.uint8)
+    dilated_edges = cv2.dilate(edges, kernel, iterations=1)
+
+    # Find contours in the dilated edges
+    contours, hierarchy = cv2.findContours(dilated_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Find the index of the largest contour
+    if len(contours) > 0:
+        largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
+
+        # Create a mask for the largest contour and fill it with 
+        mask = np.zeros_like(gray)
+        cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
+
+        # Apply Canny edge detection
+        mask_edge = cv2.Canny(cv2.convertScaleAbs(mask), 100, 200)
+
+        # Calculate the non-zero values for each row and column
+        row_non_zeros = np.count_nonzero(mask_edge, axis=1).tolist()
+        column_non_zeros = np.count_nonzero(mask_edge, axis=0).tolist()
+    else:
+        row_non_zeros = [0]
+        column_non_zeros = [0]
+
     return row_non_zeros, column_non_zeros
 
 def calculate_entropy(gray_arr):
@@ -163,15 +185,16 @@ def calculate_entropy(gray_arr):
     histogram = np.histogram(gray_arr, bins=256, range=(0, 256), density=True)[0]
 
     # Calculate the entropy using the histogram
-    entropy_value = entropy(histogram, base=2)
+    entropy_value = [entropy(histogram, base=2)]
     return entropy_value
 
-def calculate_edge_non_zero_pixels(gray_arr):
-    # Apply edge detection
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
+def calculate_non_zero_pixels(gray_arr):
+    # Apply adaptive threshold
+    binary = cv2.adaptiveThreshold(cv2.convertScaleAbs(gray_arr), 255, 
+                                   cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
 
     # Calculate the number of non-zero pixels
-    non_zero_pixels = np.count_nonzero(edges)
+    non_zero_pixels = [np.count_nonzero(binary)]
     return non_zero_pixels
 
 def calculate_perimeter(gray_arr):
@@ -197,9 +220,9 @@ def calculate_perimeter(gray_arr):
         mask_edge = cv2.Canny(cv2.convertScaleAbs(mask), 100, 200)
 
         # Calculate the number of non-zero pixels
-        perimeter = np.count_nonzero(mask_edge)
+        perimeter = [np.count_nonzero(mask_edge)]
     else:
-        perimeter = 0
+        perimeter = [0]
     return perimeter
 
 def calculate_cb_cr_histogram(img_rgb):
@@ -251,8 +274,77 @@ def calculate_mask_area(gray_arr):
         # Calculate the number of non-zero pixels
         non_zero_pixels = np.count_nonzero(mask)
 
-        mask_area = round((non_zero_pixels / (h * w)) * 100)
+        mask_area = [round((non_zero_pixels / (h * w)) * 100)]
     else:
-        mask_area = 0
+        mask_area = [0]
     return mask_area
 
+def calculate_gradient(gray_arr, image_rgb):
+    # 計算灰度影像的梯度
+    gradient_x = cv2.Sobel(gray_arr, cv2.CV_64F, 1, 0, ksize=3)
+    gradient_y = cv2.Sobel(gray_arr, cv2.CV_64F, 0, 1, ksize=3)
+
+    # 計算每個色彩通道的梯度
+    gradient_r = cv2.Sobel(image_rgb[:,:,2], cv2.CV_64F, 1, 1, ksize=3)
+    gradient_g = cv2.Sobel(image_rgb[:,:,1], cv2.CV_64F, 1, 1, ksize=3)
+    gradient_b = cv2.Sobel(image_rgb[:,:,0], cv2.CV_64F, 1, 1, ksize=3)
+
+    # 計算梯度特徵
+    gradient = np.array([np.mean(gradient_x), np.mean(gradient_y),
+                         np.mean(gradient_r), np.mean(gradient_g), np.mean(gradient_b)]).tolist()
+    return gradient
+
+def calculate_texture(gray_image):
+    # 設定GLCM的參數
+    distances = [1] # 鄰域距離
+    angles = [0, np.pi/4, np.pi/2, 3*np.pi/4] # 鄰域方向
+
+    # 計算GLCM
+    gray_image = (gray_image * 255).astype(np.uint8)
+    glcm = graycomatrix(gray_image, distances=distances, angles=angles, symmetric=True, normed=True)
+
+    # 提取紋理特徵
+    # 計算對比度-較高的對比度值表示圖像中不同區域之間的亮度差異較大
+    contrast = graycoprops(glcm, prop='contrast')
+    # 計算不相似度-較高的不相似度值表示圖像中不同區域之間的灰度差異較大
+    dissimilarity = graycoprops(glcm, prop='dissimilarity')
+    #計算均勻度-較高的均勻度值表示圖像中不同區域之間的灰度值較為均勻
+    homogeneity = graycoprops(glcm, prop='homogeneity')
+    # #計算能量-較高的能量值表示圖像中灰度值的分佈較平均
+    # energy = graycoprops(glcm, prop='energy')
+    #計算相關性-較接近1的相關性值表示圖像中不同區域之間的灰度變化趨勢相似
+    correlation = graycoprops(glcm, prop='correlation')
+    # #計算角二階矩值-較高的ASM值表示圖像中灰度值的分佈較平坦
+    # ASM = graycoprops(glcm, prop='ASM')
+
+    texture_array = np.hstack((contrast, dissimilarity, homogeneity, correlation))
+    texture_array = np.squeeze(texture_array)
+    texture_list = texture_array.tolist()
+    return texture_list
+
+def calculate_rgb_standard_deviation(image_rgb):
+    # Calculate the standard deviation of the RGB image
+    rgb_std_dev = np.std(image_rgb, axis=(0, 1)).tolist()
+    return rgb_std_dev
+
+def calculate_variance(gray_image):
+    # Calculate the variance of the grayscale image
+    variance = [np.var(gray_image)]
+    return variance
+
+def calculate_freq_std(gray_image):
+    # Perform Fourier Transform
+    f = np.fft.fft2(gray_image)
+    fshift = np.fft.fftshift(f)
+
+    # Convert the magnitude spectrum to logarithmic scale
+    magnitude_spectrum = 20 * np.log(np.abs(fshift))
+
+    # Calculate the standard deviation of the magnitude spectrum
+    freq_std_dev = [np.std(magnitude_spectrum)]
+    return freq_std_dev
+
+def calculate_mean_channel(image_rgb):
+    # Calculate the mean channel value of the RGB image
+    mean_channel_value = np.mean(image_rgb, axis=(0, 1)).tolist()
+    return mean_channel_value
