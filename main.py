@@ -139,7 +139,7 @@ best_random_state_seed = None
 best_precision_seed = 0
 best_recall_seed = 0
 
-for random_seed in range(1):
+for random_seed in tqdm(range(1000), desc='Find Best Random Seed'):
     torch.manual_seed(random_seed)
 
     num_clusters = 10
