@@ -1,3 +1,4 @@
+# calculate numbers of edge image's non-zero pixel
 import cv2
 import numpy as np
 
@@ -24,40 +25,24 @@ for path in img_path:
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Apply Canny edge detection
-    edges = cv2.Canny(gray, 100, 200)
+    # Apply edge detection
+    threshold1 = 100
+    threshold2 = 150
+    # edges = cv2.Canny(gray, threshold1, threshold2)
 
-    # Dilate the edges to connect nearby edges
-    kernel = np.ones((5,5), np.uint8)
-    dilated_edges = cv2.dilate(edges, kernel, iterations=1)
-
-    # Find contours in the dilated edges
-    contours, hierarchy = cv2.findContours(dilated_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-    # Find the index of the largest contour
-    largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
-
-    # Create a mask for the largest contour and fill it with 
-    mask = np.zeros_like(gray)
-    cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
-
-    # Apply Canny edge detection
-    mask_edge = cv2.Canny(mask, 100, 200)
+    binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
 
     # Calculate the number of non-zero pixels
-    non_zero_pixels = np.count_nonzero(mask_edge)
+    non_zero_pixels = np.count_nonzero(binary)
 
     # Print the result
     print(path)
-    print("Perimeter:", non_zero_pixels)
+    print("Number of non-zero pixels in the binary image:", non_zero_pixels)
 
     # Save the final edge image
-    cv2.imwrite(f'output/perimeter/{classes[i]}.png', mask_edge)
+    cv2.imwrite(f'output/non_zero_pixel/{classes[i]}.png', binary)
 
-    # Show the final edge image
-    cv2.imshow('mask edge', mask_edge)
-
-    # Wait for a key press and then close the windows
+    cv2.imshow('binary image', binary)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     i += 1

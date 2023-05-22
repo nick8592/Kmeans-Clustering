@@ -74,7 +74,7 @@ def extract_features(images: Tensor):
         entropy = calculate_entropy(gray_arr)
 
         # Compute Edge image non-zero pixels
-        non_zero_pixels = [calculate_edge_non_zero_pixels(gray_arr)]
+        non_zero_pixels = calculate_non_zero_pixels(gray_arr)
 
         # Compute Perimeter
         perimeter = [calculate_perimeter(gray_arr)]

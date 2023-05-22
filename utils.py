@@ -151,11 +151,34 @@ def calculate_dominate_color(img_rgb):
     return center1, center2, center3
 
 def calculate_projection(gray_arr):
-    # Apply edge detection (can be skipped if the input image is already an edge map)
+    # Apply Canny edge detection
     edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
-    # Calculate the non-zero values for each row and column
-    row_non_zeros = np.count_nonzero(edges, axis=1)
-    column_non_zeros = np.count_nonzero(edges, axis=0)
+
+    # Dilate the edges to connect nearby edges
+    kernel = np.ones((5,5), np.uint8)
+    dilated_edges = cv2.dilate(edges, kernel, iterations=1)
+
+    # Find contours in the dilated edges
+    contours, hierarchy = cv2.findContours(dilated_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Find the index of the largest contour
+    if len(contours) > 0:
+        largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
+
+        # Create a mask for the largest contour and fill it with 
+        mask = np.zeros_like(gray_arr)
+        cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
+
+        # Apply Canny edge detection
+        mask_edge = cv2.Canny(cv2.convertScaleAbs(mask), 100, 200)
+
+        # Calculate the non-zero values for each row and column
+        row_non_zeros = np.count_nonzero(mask_edge, axis=1).tolist()
+        column_non_zeros = np.count_nonzero(mask_edge, axis=0).tolist()
+    else:
+        row_non_zeros = [0]
+        column_non_zeros = [0]
+
     return row_non_zeros, column_non_zeros
 
 def calculate_entropy(gray_arr):
@@ -166,12 +189,13 @@ def calculate_entropy(gray_arr):
     entropy_value = [entropy(histogram, base=2)]
     return entropy_value
 
-def calculate_edge_non_zero_pixels(gray_arr):
-    # Apply edge detection
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
+def calculate_non_zero_pixels(gray_arr):
+    # Apply adaptive threshold
+    binary = cv2.adaptiveThreshold(cv2.convertScaleAbs(gray_arr), 255, 
+                                   cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
 
     # Calculate the number of non-zero pixels
-    non_zero_pixels = np.count_nonzero(edges)
+    non_zero_pixels = [np.count_nonzero(binary)]
     return non_zero_pixels
 
 def calculate_perimeter(gray_arr):
@@ -197,9 +221,9 @@ def calculate_perimeter(gray_arr):
         mask_edge = cv2.Canny(cv2.convertScaleAbs(mask), 100, 200)
 
         # Calculate the number of non-zero pixels
-        perimeter = np.count_nonzero(mask_edge)
+        perimeter = np.count_nonzero(mask_edge).tolist()
     else:
-        perimeter = 0
+        perimeter = [0]
     return perimeter
 
 def calculate_cb_cr_histogram(img_rgb):
