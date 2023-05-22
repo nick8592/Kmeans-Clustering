@@ -31,7 +31,7 @@ def calculate_contours(grayscale_image, threshold:int = 128):
     contours = measure.find_contours(img_arr, 0.5)
 
     # Calculate the number of contours
-    num_contours = len(contours)
+    num_contours = [len(contours)]
     return num_contours
 
 def calculate_euler_number(gray_arr):
@@ -44,12 +44,12 @@ def calculate_euler_number(gray_arr):
             d = gray_arr[i+1][j+1]
             if (a != b) or (a != c) or (a != d):
                 euler_number += 1
-    return euler_number
+    return [euler_number]
 
 def calculate_irregularity_ratio(gray_arr):
     std_dev = np.std(gray_arr)
     mean = np.mean(gray_arr)
-    irregularity_ratio = std_dev/mean
+    irregularity_ratio = [std_dev/mean]
     return irregularity_ratio
 
 def calculate_h_histogram(img_rgb):
@@ -72,9 +72,9 @@ def calculate_lines(gray_blur):
 
     # Output the number of detected lines
     if lines is not None:
-        return len(lines)
+        return [len(lines)]
     else:
-        return 0
+        return [0]
 
 def calculate_circles(gray_blur):
     # Detect circles using HoughCircles function
@@ -275,9 +275,9 @@ def calculate_mask_area(gray_arr):
         # Calculate the number of non-zero pixels
         non_zero_pixels = np.count_nonzero(mask)
 
-        mask_area = round((non_zero_pixels / (h * w)) * 100)
+        mask_area = [round((non_zero_pixels / (h * w)) * 100)]
     else:
-        mask_area = 0
+        mask_area = [0]
     return mask_area
 
 def calculate_gradient(gray_arr, image_rgb):
