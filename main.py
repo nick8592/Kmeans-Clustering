@@ -92,7 +92,7 @@ def extract_features(images: Tensor):
         # gradient = calculate_gradient(gray_arr, img)
 
         # Compute Texture
-        texture = calculate_texture(gray_arr)
+        # texture = calculate_texture(gray_arr)
 
         # Compute RGB Standard Deviation
         # rgb_std_dev = calculate_rgb_standard_deviation(img)
@@ -116,7 +116,7 @@ def extract_features(images: Tensor):
     return features
 
 #-----------------------------------------------------------------------------------------------
-seed = 210
+seed = 138
 torch.manual_seed(seed)
 
 num_clusters = 10
@@ -186,8 +186,8 @@ for random_state in tqdm(range(100), desc='Find Best Random State'):
     # Perform k-means clustering
     kmeans = KMeans(n_clusters=num_clusters, random_state=random_state, n_init='auto').fit(scaled_train_features)
     predicted_labels = kmeans.predict(scaled_val_features)
-    pre = precision_score(val_labels, predicted_labels, average='micro', zero_division=1)
-    rec = recall_score(val_labels, predicted_labels, average='micro', zero_division=1)
+    pre = precision_score(val_labels, predicted_labels, average='macro', zero_division=1)
+    rec = recall_score(val_labels, predicted_labels, average='macro', zero_division=1)
     if pre + rec > best_precision + best_recall:
         best_precision = pre
         best_recall = rec
