@@ -9,11 +9,13 @@ from sklearn.metrics import precision_score, recall_score
 from sklearn.preprocessing import StandardScaler
 from utils import *
 
+
 def show_img(images: Tensor):
     for i in range(images.shape[0]):
         img = transforms.ToPILImage()(images[i])
         img.show()
         input()
+
 
 # Define a function to extract features from an image
 def extract_features(images: Tensor):
@@ -23,7 +25,7 @@ def extract_features(images: Tensor):
         array = images[i].numpy()
 
         # Transpose the numpy array to match the format expected by OpenCV (H, W, C)
-        img = np.transpose(array, (1, 2, 0))*255
+        img = np.transpose(array, (1, 2, 0)) * 255
 
         # Convert the numpy array to an OpenCV image in grayscale format
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -107,16 +109,28 @@ def extract_features(images: Tensor):
         # mean_channel_value = calculate_mean_channel(img)
 
         # Concatenate the features into a single array
-        feature_list = [brightness, std_dev, entropy*10, lines, perimeter,
-                        row_non_zeros, column_non_zeros, non_zero_pixels,
-                        h_hist, rgb_hist, a_hist, b_hist]
+        feature_list = [
+            brightness,
+            std_dev,
+            entropy * 10,
+            lines,
+            perimeter,
+            row_non_zeros,
+            column_non_zeros,
+            non_zero_pixels,
+            h_hist,
+            rgb_hist,
+            a_hist,
+            b_hist,
+        ]
         feature = np.concatenate(feature_list)
-        
+
         features.append(feature)
     features = np.array(features)
     return features
 
-#-----------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------
 seed = 138
 torch.manual_seed(seed)
 
@@ -125,15 +139,17 @@ num_clusters = 10
 # Define the transformation for the images
 # It's an option to transform image, you can either use this or design your transform function.
 
-transform = transforms.Compose([
-    # transforms.Resize((224, 224)),  # Resize the images to a fixed size
-    transforms.ToTensor(),         # Convert the images to tensors
-    # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # Normalize the images
-])
+transform = transforms.Compose(
+    [
+        # transforms.Resize((224, 224)),  # Resize the images to a fixed size
+        transforms.ToTensor(),  # Convert the images to tensors
+        # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # Normalize the images
+    ]
+)
 
 # Load the dataset
-train_dataset = datasets.ImageFolder('dataset/train', transform=transform)
-val_dataset = datasets.ImageFolder('dataset/test', transform=transform)
+train_dataset = datasets.ImageFolder("dataset/train", transform=transform)
+val_dataset = datasets.ImageFolder("dataset/test", transform=transform)
 assert train_dataset.class_to_idx == val_dataset.class_to_idx
 classes = train_dataset.class_to_idx
 
@@ -145,33 +161,33 @@ val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=10, shuffle=Tru
 
 # Set the device to use
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = 'cpu'
+device = "cpu"
 
 # Get train images feature
 train_features = []
-for images, labels in tqdm(train_loader, desc='Extract Train Image Features'):
+for images, labels in tqdm(train_loader, desc="Extract Train Image Features"):
     images, labels = images.to(device), labels.to(device)
     features = extract_features(images)
     train_features.append(features)
 train_features = np.array(train_features)
-train_image_num = train_features.shape[0]*train_features.shape[1]
+train_image_num = train_features.shape[0] * train_features.shape[1]
 train_feature_num = train_features.shape[2]
 train_features = np.reshape(train_features, (train_image_num, train_feature_num))
 
 # Get val images feature
 val_features = []
 val_labels = []
-for images, labels in tqdm(val_loader, desc='Extract Val Image Features'):
+for images, labels in tqdm(val_loader, desc="Extract Val Image Features"):
     images, labels = images.to(device), labels.to(device)
     features = extract_features(images)
     val_features.append(features)
     val_labels.append(labels.numpy())
 val_features = np.array(val_features)
-val_image_num = val_features.shape[0]*val_features.shape[1]
+val_image_num = val_features.shape[0] * val_features.shape[1]
 val_feature_num = val_features.shape[2]
 val_features = np.reshape(val_features, (val_image_num, val_feature_num))
 val_labels = np.array(val_labels)
-val_labels = np.reshape(val_labels, (val_image_num, ))
+val_labels = np.reshape(val_labels, (val_image_num,))
 
 # Pre-Processing
 scaler = StandardScaler()
@@ -183,12 +199,16 @@ best_random_state = None
 best_precision = 0
 best_recall = 0
 
-for random_state in tqdm(range(100), desc='Find Best Random State'):
+for random_state in tqdm(range(100), desc="Find Best Random State"):
     # Perform k-means clustering
-    kmeans = KMeans(n_clusters=num_clusters, random_state=random_state, n_init='auto').fit(scaled_train_features)
+    kmeans = KMeans(
+        n_clusters=num_clusters, random_state=random_state, n_init="auto"
+    ).fit(scaled_train_features)
     predicted_labels = kmeans.predict(scaled_val_features)
-    pre = precision_score(val_labels, predicted_labels, average='macro', zero_division=1)
-    rec = recall_score(val_labels, predicted_labels, average='macro', zero_division=1)
+    pre = precision_score(
+        val_labels, predicted_labels, average="macro", zero_division=1
+    )
+    rec = recall_score(val_labels, predicted_labels, average="macro", zero_division=1)
     if pre + rec > best_precision + best_recall:
         best_precision = pre
         best_recall = rec
@@ -198,18 +218,18 @@ for random_state in tqdm(range(100), desc='Find Best Random State'):
 # Predict the clusters for the test images
 print(f"Val Labels: \n{val_labels}")
 print(f"Predicted Labels: \n{best_predicted_labels}")
-print('==========================================================================')
+print("==========================================================================")
 print(f"Features Num: {scaled_train_features.shape[1]}")
 print(f"Best random seed: {seed}")
 print(f"Best random_state: {best_random_state}")
-print('==========================================================================')
+print("==========================================================================")
 print(f"{'Class':13} |  {'Precision'}  |  {'Recall'}")
-print('------------------------------------------')
+print("------------------------------------------")
 for key, value in classes.items():
     val = [1 if n == value else 0 for n in val_labels]
     pred = [1 if n == value else 0 for n in best_predicted_labels]
-    pre = precision_score(val, pred, average='binary', zero_division=1)
-    rec = recall_score(val, pred, average='binary', zero_division=1)
+    pre = precision_score(val, pred, average="binary", zero_division=1)
+    rec = recall_score(val, pred, average="binary", zero_division=1)
     print(f"{key:13} |     {pre:.4f}  |  {rec:.4f}")
-print('------------------------------------------')
+print("------------------------------------------")
 print(f"{'Total':13} |     {best_precision:.4f}  |  {best_recall:.4f}")
