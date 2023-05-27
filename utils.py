@@ -95,9 +95,10 @@ def calculate_standard_deviation(gray_arr):
     std_dev = [np.std(gray_arr)]
     return std_dev
 
-def calculate_edge_histogram(img_rgb, gray_arr):
+def calculate_edge_histogram(img_rgb, gray):
     # Apply Canny edge detection
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
+    gray = gray.astype(np.uint8)
+    edges = cv2.Canny(gray, 100, 200)
 
     # Dilate the edges to connect nearby edges
     kernel = np.ones((5,5), np.uint8)
@@ -111,11 +112,8 @@ def calculate_edge_histogram(img_rgb, gray_arr):
         # Find the index of the largest contour
         largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
 
-        # Find the index of the largest contour
-        largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
-
         # Create a mask for the largest contour and fill it with 
-        mask = np.zeros_like(gray_arr)
+        mask = np.zeros_like(gray)
         cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
 
         # Calculate the area of the mask
@@ -150,9 +148,10 @@ def calculate_dominate_color(img_rgb):
     center3 = (centers.cluster_centers_[2]*255).astype(int)
     return center1, center2, center3
 
-def calculate_projection(gray_arr):
+def calculate_projection(gray):
     # Apply Canny edge detection
-    edges = cv2.Canny(cv2.convertScaleAbs(gray_arr), 100, 200)
+    gray = gray.astype(np.uint8)
+    edges = cv2.Canny(gray, 100, 200)
 
     # Dilate the edges to connect nearby edges
     kernel = np.ones((5,5), np.uint8)
@@ -166,7 +165,7 @@ def calculate_projection(gray_arr):
         largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
 
         # Create a mask for the largest contour and fill it with 
-        mask = np.zeros_like(gray_arr)
+        mask = np.zeros_like(gray)
         cv2.drawContours(mask, [contours[largest_contour_index]], 0,  (255, 255, 255), -1)
 
         # Apply Canny edge detection
@@ -221,7 +220,7 @@ def calculate_perimeter(gray_arr):
         mask_edge = cv2.Canny(cv2.convertScaleAbs(mask), 100, 200)
 
         # Calculate the number of non-zero pixels
-        perimeter = np.count_nonzero(mask_edge).tolist()
+        perimeter = [np.count_nonzero(mask_edge)]
     else:
         perimeter = [0]
     return perimeter

@@ -23,7 +23,7 @@ def extract_features(images: Tensor):
         array = images[i].numpy()
 
         # Transpose the numpy array to match the format expected by OpenCV (H, W, C)
-        img = np.transpose(array, (1, 2, 0))
+        img = np.transpose(array, (1, 2, 0))*255
 
         # Convert the numpy array to an OpenCV image in grayscale format
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -116,7 +116,7 @@ def extract_features(images: Tensor):
     return features
 
 #-----------------------------------------------------------------------------------------------
-seed = 210
+seed = 138
 torch.manual_seed(seed)
 
 num_clusters = 10
@@ -186,8 +186,8 @@ for random_state in tqdm(range(100), desc='Find Best Random State'):
     # Perform k-means clustering
     kmeans = KMeans(n_clusters=num_clusters, random_state=random_state, n_init='auto').fit(scaled_train_features)
     predicted_labels = kmeans.predict(scaled_val_features)
-    pre = precision_score(val_labels, predicted_labels, average='micro', zero_division=0)
-    rec = recall_score(val_labels, predicted_labels, average='micro', zero_division=0)
+    pre = precision_score(val_labels, predicted_labels, average='macro', zero_division=0)
+    rec = recall_score(val_labels, predicted_labels, average='macro', zero_division=0)
     if pre + rec > best_precision + best_recall:
         best_precision = pre
         best_recall = rec
