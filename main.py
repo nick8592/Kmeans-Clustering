@@ -100,7 +100,7 @@ def extract_features(images: Tensor):
         # rgb_std_dev = calculate_rgb_standard_deviation(img)
 
         # Compute Variance
-        variance = calculate_variance(gray_arr)
+        # variance = calculate_variance(gray_arr)
 
         # Compute Frequency domain Standard Deviation
         # freq_std_dev = calculate_freq_std(gray_arr)
@@ -116,9 +116,10 @@ def extract_features(images: Tensor):
             brightness,
             std_dev,
             entropy * 10,
-            variance,
             lines,
             perimeter,
+            row_non_zeros,
+            column_non_zeros,
             non_zero_pixels,
             h_hist,
             rgb_hist,
@@ -216,10 +217,10 @@ for random_seed in tqdm(range(1000), desc="Find Best Random Seed"):
         ).fit(scaled_train_features)
         predicted_labels = kmeans.predict(scaled_val_features)
         pre = precision_score(
-            val_labels, predicted_labels, average="macro", zero_division=1
+            val_labels, predicted_labels, average="macro", zero_division=0
         )
         rec = recall_score(
-            val_labels, predicted_labels, average="macro", zero_division=1
+            val_labels, predicted_labels, average="macro", zero_division=0
         )
         if pre + rec > best_precision + best_recall:
             best_precision = pre
@@ -256,8 +257,8 @@ print("------------------------------------------")
 for key, value in classes.items():
     val = [1 if n == value else 0 for n in val_labels]
     pred = [1 if n == value else 0 for n in best_predicted_labels_seed]
-    pre = precision_score(val, pred, average="binary", zero_division=1)
-    rec = recall_score(val, pred, average="binary", zero_division=1)
+    pre = precision_score(val, pred, average="binary", zero_division=0)
+    rec = recall_score(val, pred, average="binary", zero_division=0)
     print(f"{key:13} |     {pre:.4f}  |  {rec:.4f}")
 print("------------------------------------------")
 print(f"{'Total':13} |     {best_precision_seed:.4f}  |  {best_recall_seed:.4f}")
