@@ -100,7 +100,7 @@ def extract_features(images: Tensor):
         # rgb_std_dev = calculate_rgb_standard_deviation(img)
 
         # Compute Variance
-        variance = calculate_variance(gray_arr)
+        # variance = calculate_variance(gray_arr)
 
         # Compute Frequency domain Standard Deviation
         # freq_std_dev = calculate_freq_std(gray_arr)
