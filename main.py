@@ -186,8 +186,8 @@ for random_state in tqdm(range(100), desc='Find Best Random State'):
     # Perform k-means clustering
     kmeans = KMeans(n_clusters=num_clusters, random_state=random_state, n_init='auto').fit(scaled_train_features)
     predicted_labels = kmeans.predict(scaled_val_features)
-    pre = precision_score(val_labels, predicted_labels, average='micro', zero_division=1)
-    rec = recall_score(val_labels, predicted_labels, average='micro', zero_division=1)
+    pre = precision_score(val_labels, predicted_labels, average='micro', zero_division=0)
+    rec = recall_score(val_labels, predicted_labels, average='micro', zero_division=0)
     if pre + rec > best_precision + best_recall:
         best_precision = pre
         best_recall = rec
@@ -207,8 +207,8 @@ print('------------------------------------------')
 for key, value in classes.items():
     val = [1 if n == value else 0 for n in val_labels]
     pred = [1 if n == value else 0 for n in best_predicted_labels]
-    pre = precision_score(val, pred, average='binary', zero_division=1)
-    rec = recall_score(val, pred, average='binary', zero_division=1)
+    pre = precision_score(val, pred, average='binary', zero_division=0)
+    rec = recall_score(val, pred, average='binary', zero_division=0)
     print(f"{key:13} |     {pre:.4f}  |  {rec:.4f}")
 print('------------------------------------------')
 print(f"{'Total':13} |     {best_precision:.4f}  |  {best_recall:.4f}")
