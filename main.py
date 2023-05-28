@@ -131,7 +131,7 @@ def extract_features(images: Tensor):
 
 
 # -----------------------------------------------------------------------------------------------
-seed = 138
+seed = 75
 torch.manual_seed(seed)
 
 num_clusters = 10
