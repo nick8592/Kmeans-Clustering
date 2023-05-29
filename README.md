@@ -15,6 +15,9 @@ Please complete the following requirements
 3. Calculate the **precision rate** and **recall rate** for each category.
 
 ## Precision & Recall
+Calculate the precision rate and recall rate for each category.
+ - Precision $= \space {{True Positive \over Actual Results} \space or \space{True Positive \over True Positive + False Positive}}$
+ - Recall $= \space{{True Positive \over Actual Results} \space or \space{True Positive \over True Positive + False Negative}}$
 
 Precision can be seen as a measure of quality, and recall as a measure of quantity. Higher precision means that an algorithm returns more relevant results than irrelevant ones, and high recall means that an algorithm returns most of the relevant results (whether or not irrelevant ones are also returned). [For more...](https://en.wikipedia.org/wiki/Precision_and_recall)
 
