@@ -70,7 +70,7 @@ def extract_features(images: Tensor):
         # center1, center2, center3 = calculate_dominate_color(img)
 
         # Compute Projection
-        # row_non_zeros, column_non_zeros = calculate_projection(gray)
+        row_non_zeros, column_non_zeros = calculate_projection(gray)
 
         # Compute Entropy
         entropy = calculate_entropy(gray_arr)
@@ -100,7 +100,7 @@ def extract_features(images: Tensor):
         # rgb_std_dev = calculate_rgb_standard_deviation(img)
 
         # Compute Variance
-        variance = calculate_variance(gray_arr)
+        # variance = calculate_variance(gray_arr)
 
         # Compute Frequency domain Standard Deviation
         # freq_std_dev = calculate_freq_std(gray_arr)
@@ -113,9 +113,10 @@ def extract_features(images: Tensor):
             brightness,
             std_dev,
             entropy * 10,
-            variance,
             lines,
             perimeter,
+            row_non_zeros, 
+            column_non_zeros,
             non_zero_pixels,
             h_hist,
             rgb_hist,
@@ -130,7 +131,7 @@ def extract_features(images: Tensor):
 
 
 # -----------------------------------------------------------------------------------------------
-seed = 23
+seed = 757
 torch.manual_seed(seed)
 
 num_clusters = 10
